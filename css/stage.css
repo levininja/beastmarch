@@ -1,0 +1,24 @@
+/* stage.css — The map stage, message log, control dock (pad, action buttons) and portrait art containers. */
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#map{display:block;width:100%;height:auto;aspect-ratio:15/11}
+#panel{padding:14px;min-height:300px}
+#log{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;height:150px;overflow:auto;font-size:16px}
+@media (min-width:900px){#log{height:230px}}
+#log p{margin:0 0 5px;color:var(--log-info)}
+#log p.good{color:var(--log-good)}#log p.bad{color:var(--log-bad)}#log p.loot{color:var(--log-loot)}
+#dock{display:grid;gap:8px}
+.pad{display:grid;grid-template-columns:repeat(3,56px);grid-auto-rows:48px;gap:6px}
+.pad .b{justify-content:center;padding:0;font:700 20px var(--mono)}
+.dockrow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:6px;flex:1 1 220px;min-width:0}
+.cmds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cmds .b{justify-content:flex-start;flex-wrap:wrap;line-height:1.15;padding-block:6px}
+.b .sub{font:500 12px var(--mono);color:var(--ink2);width:100%}
+.ab{display:inline-block;border:1px solid var(--gold);color:var(--gold);border-radius:4px;padding:0 6px;font:700 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;vertical-align:middle}
+#dock{transition:opacity .15s}
+.art{display:inline-block;flex:none}
+.art svg{width:100%;height:100%;display:block}
+.art.port{background:var(--surface2);border-radius:12px;border:1px solid var(--line)}
+.card{content-visibility:auto;contain-intrinsic-size:auto 150px}
+#dock.locked .b{opacity:.45;pointer-events:none}
+.hint{font-size:14px;color:var(--ink2)}

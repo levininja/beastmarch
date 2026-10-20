@@ -1,0 +1,13 @@
+{
+  "name": "beastmarch",
+  "version": "1.0.0",
+  "description": "Beastmarch: a low-magic fantasy creature-binding game that runs in the browser.",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build.js",
+    "build:fragment": "node tools/build.js --fragment",
+    "test": "node tests/run.js",
+    "smoke": "python3 tests/smoke.py"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

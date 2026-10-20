@@ -1,9 +1,14 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Beastmarch</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&family=Pirata+One&display=swap">
+<!-- Stylesheets (cascade order matters; see README). -->
 <style>
-/* Layout: phone-first single column (status, map or battle stage, message log, controls). From 900px the stage sits left and the log and controls form a side rail. */
+/* tokens.css — Design tokens: colour themes (light, auto-dark, forced dark/light) and font stacks. */
 :root{
   --bg:#E4E9E3; --surface:#F3F6F1; --surface2:#D8DFD7; --ink:#15211E; --ink2:#46564F; --line:#AEBBB3;
   --accent:#17695F; --accent-ink:#FFFFFF; --gold:#8A5F0A; --hp:#B8352B; --bad:#B8352B; --xp:#2F63A8; --focus:#0B57D0;
@@ -20,6 +25,10 @@
   --bg:#0E1513; --surface:#17211E; --surface2:#222F2B; --ink:#E3EBE6; --ink2:#9DB0A8; --line:#34453F;
   --accent:#4FC0AE; --accent-ink:#04211C; --gold:#E3B24F; --hp:#E0594D; --xp:#5E9BE6; --focus:#8AB4FF;
   --log-info:#9DB0A8; --log-good:#6CCB84; --log-bad:#F0786C; --log-loot:#E3B24F; color-scheme:dark}
+</style>
+<style>
+/* base.css — Reset, page layout grid, typography and the shared button/chip/keyboard-hint/meter components. */
+/* Layout: phone-first single column (status, map or battle stage, message log, controls). From 900px the stage sits left and the log and controls form a side rail. */
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font:17px/1.4 var(--body);
@@ -59,6 +68,9 @@ kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:1px 10px;font:600 13px var(--mono);background:var(--surface);white-space:nowrap}
 .chip i{width:10px;height:10px;border-radius:50%;background:var(--c)}
 .tc{display:inline-block;background:var(--c);color:var(--ci);border-radius:4px;padding:1px 7px;font:600 12px var(--mono)}
+</style>
+<style>
+/* stage.css — The map stage, message log, control dock (pad, action buttons) and portrait art containers. */
 .stage{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 #map{display:block;width:100%;height:auto;aspect-ratio:15/11}
 #panel{padding:14px;min-height:300px}
@@ -82,6 +94,9 @@ kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2
 .card{content-visibility:auto;contain-intrinsic-size:auto 150px}
 #dock.locked .b{opacity:.45;pointer-events:none}
 .hint{font-size:14px;color:var(--ink2)}
+</style>
+<style>
+/* panels.css — In-game panels: NPC dialogue, quests, lists/items, cards, battle screen, title screen, world-map tabs. */
 .npc{display:flex;gap:12px;align-items:center;margin-bottom:8px}
 .npc h2{margin:0}
 .say{font-size:19px;line-height:1.45;border-left:3px solid var(--gold);padding-left:12px;margin:10px 0}
@@ -114,6 +129,9 @@ kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 #wmap{width:100%;height:auto;aspect-ratio:5/4;display:block;border:1px solid var(--line);border-radius:6px}
 
+</style>
+<style>
+/* arena.css — Proving Hall / tournament screens: calendar, brackets, match rows, pips. */
 .signline{font-size:20px;margin:4px 0 10px}
 .cal{display:flex;gap:10px;align-items:center}
 .cal .rk{font:400 34px/1 var(--display);width:40px;text-align:center}
@@ -134,6 +152,9 @@ kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2
 .arhead{margin-bottom:6px}
 .bad{color:var(--bad,#C0392B)}
 
+</style>
+<style>
+/* evolution.css — Evolution celebration screen and its keyframe animations (with reduced-motion overrides). */
 .evo{display:grid;gap:10px;justify-items:center;text-align:center}
 .evt{font:400 44px/1 var(--display);margin:0;color:var(--gold);animation:evFade .8s .2s both}
 .stage2{position:relative;width:210px;height:210px;display:grid;place-items:center}
@@ -156,6 +177,9 @@ kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2
 @media (prefers-reduced-motion:reduce){.stage2 .old,.stage2 .glow,.stage2 .spark{display:none}.evt,.stage2 .new,.evsub,.evbody{animation:none}}
 @media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
 </style>
+</head>
+<body>
+<!-- Static shell. Everything inside #panel, #log and #dock is rendered by js/ui.js. -->
 <div class="app">
   <header class="top">
     <h1>Beastmarch</h1>
@@ -183,12 +207,26 @@ kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2
     </div>
   </div>
 </div>
+<!-- Scripts are classic (non-module) scripts that share one global scope.
+     ORDER MATTERS: each file uses constants defined by the files above it. -->
 <script>
+/**
+ * data.js — static game data and balance constants
+ *
+ * Load order: 1st. Defines the grid/world size constants, the type chart, move
+ * table (MV), the 43 creature lines and 100 species (LINES, XZ), zone metadata
+ * (ZN), towns, lairs, items and interior room layouts. Nothing here touches
+ * the DOM or game state `S`. Note that LAIRS is extended with the outer-ring
+ * lairs at the bottom of the lair section, already in final world coordinates.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
 'use strict';
 /* The original 160x128 land sits in the middle of a larger map; an outer ring of high-level zones surrounds it. */
 const OX=32,OY=24,W=160+OX*2,H=128+OY*2,COLS=15,ROWS=11,SAVE_KEY='beastmarch.save.v1',START=[80+OX,90+OY],VER=4;
 const TYPE={Ember:['#D9562B','#FFFFFF'],Tide:['#2C86C4','#FFFFFF'],Gale:['#6FB0A6','#04201C'],Stone:['#8C7B64','#FFFFFF'],Bloom:['#4C9F4F','#FFFFFF'],Gloom:['#7B5CAA','#FFFFFF'],Frost:['#62B8D8','#032230'],Aether:['#D9A82B','#2A1D00'],Plain:['#8A8F8D','#FFFFFF']};
 const STRONG={Ember:['Bloom','Frost'],Tide:['Ember','Stone'],Bloom:['Tide','Stone'],Stone:['Gale','Ember'],Gale:['Bloom','Gloom'],Gloom:['Aether','Gale'],Aether:['Gloom','Frost'],Frost:['Gale','Bloom']};
+/** Type-effectiveness multiplier of attacking type `a` against defending type `d` (2, 1 or 0.5). */
 function tmult(a,d){let m=1;if((STRONG[a]||[]).includes(d))m*=2;if((STRONG[d]||[]).includes(a))m*=.5;return m;}
 /* Balance knobs */
 const BOND=1.15;          // companions' moves deal this much more damage
@@ -206,6 +244,7 @@ const MV={
  Gloom:[['Shade Bite',40],['Night Claw',60],['Umbral Rend',85]],
  Frost:[['Rime Nip',40],['Ice Shard',60],['Whiteout',85]],
  Aether:[['Star Spark',40],['Halo Pulse',60],['Radiant Verdict',85]]};
+/** Moves a species knows at level `l` (learned by level, last four kept). */
 function movesFor(sp,l){
   const t=MV[sp.t];
   const m=[{n:t[0][0],p:t[0][1],t:sp.t},{n:'Rush',p:45,t:'Plain'}];
@@ -267,6 +306,7 @@ const LINES=[
  {i:['behemothcalf','behemoth'],n:['Behemoth Calf','Behemoth'],t:['Stone','Stone'],s:[[110,90,104,50],[150,120,130,54]],c:.12,tp:2,z:[],r:5,e:[32],a:'quad/horns,spikes/crest,fangs'},
  {i:['simurghling','simurgh'],n:['Simurgh Fledgling','Simurgh'],t:['Aether','Aether'],s:[[84,86,76,104],[112,116,96,128]],c:.12,tp:0,z:[],r:5,e:[32],a:'bird/crest,halo/tail4,flame'}];
 /* Evolved forms without listed stats are derived from the form before: weaker bases grow more. */
+/** Derives a species stat block from its base weights, scaled by `minMul`/`base`. */
 function growStats(p,minMul,base){
   const bst=p[0]+p[1]+p[2]+p[3],m=Math.max(minMul,base-bst/(base>1.5?700:900));
   return[Math.round(p[0]*m),Math.round(p[1]*m),Math.round(p[2]*m),Math.round(p[3]*(1+(m-1)*.6))];
@@ -345,10 +385,25 @@ const ROOMNAME={cottage:"Marra's Cottage",healer:"Healer's Hall",shop:'Provision
 const DG=[
  {k:'trivial',n:'Trivial',c:'#8A938F'},{k:'easy',n:'Easy',c:'#3F9A4A'},{k:'even',n:'Even match',c:'#C9A40F'},
  {k:'hard',n:'Hard',c:'#E07A1F'},{k:'danger',n:'Dangerous',c:'#D6402F'},{k:'deadly',n:'Deadly',c:'#A3195B'}];
+/** Colour/label describing how threatening a foe of level `foeLv` is to a player of level `myLv`. */
 function danger(foeLv,myLv){
   const d=foeLv-myLv;
   return d<=-6?DG[0]:d<=-3?DG[1]:d<=1?DG[2]:d<=3?DG[3]:d<=5?DG[4]:DG[5];
 }
+
+</script>
+<script>
+/**
+ * quests.js — materials, crafting recipes, drop tables, NPCs, shrines and quests
+ *
+ * Load order: 2nd. Pure data plus a few lookup tables (MATS, RC, QB, SHB).
+ * Coordinates written in quest `visit` objectives and shrines are authored in
+ * the original 160x128 map and shifted by (OX,OY) by the loops in this file,
+ * so the data stays readable.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 /* ---------- materials, recipes, drops ---------- */
 const MD=[
  ['copper','Copper Ingot','metal'],['iron','Iron Ingot','metal'],['silver','Silver Ingot','metal'],['gold','Gold Ingot','metal'],
@@ -812,10 +867,27 @@ QUESTS.push(
   prog:'The Alpha of the Worldscar, far to the north. It knows you are coming.',done:'(She does not speak for a full minute.) The charts say that is everything. The charts are done. Oh, I will miss them. Please accept all of it, and my deepest gratitude.',
   xp:40000,items:{gilded:3,tonic:3},mats:{starsteel:2,mithril:2,bloodstone:2,sunstone:2,diamond:2,gold:2}});
 const QB={};for(const q of QUESTS)QB[q.id]=q;
+
+</script>
+<script>
+/**
+ * world.js — deterministic world generation
+ *
+ * Load order: 3rd. build() creates TILES/REG for the 224x176 map from seeded
+ * value noise: zone layout (layoutRegions), water (waterField), land features
+ * (GEN), towns, paths/bridges (connectAll) and NPC placement (placeNPCs). The
+ * same code always produces the same world, so saves only store the player's
+ * changes. Also holds the interior-room helpers.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 const TL={G:0,TALL:1,TREE:2,ROCK:3,WATER:4,ROAD:5,FENCE:6,BWALL:7,DOOR:8,SIGN:9,LAIR:10,BRIDGE:11,LAVA:12,BENCH:13,SHRINE:14};
 const BLK=[0,0,1,1,1,0,1,1,0,1,1,0,1,1,1];
 let TILES,REG,DOORS,SIGNS,NPCPOS={},NPCAT={};
+/** Integer hash of (x,y,seed) mapped to [0,1). Basis of all deterministic randomness. */
 function hash2(x,y,s){let h=(Math.imul(x,374761393)+Math.imul(y,668265263)+Math.imul(s,2147483647))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296;}
+/** Smooth value noise at scale `sc`; used for terrain, zone wobble and water. */
 function vnoise(x,y,sc,s){
   const gx=x/sc,gy=y/sc,x0=Math.floor(gx),y0=Math.floor(gy),fx=gx-x0,fy=gy-y0;
   const a=hash2(x0,y0,s),b=hash2(x0+1,y0,s),c=hash2(x0,y0+1,s),d=hash2(x0+1,y0+1,s);
@@ -870,6 +942,7 @@ const inb=(x,y)=>x>=0&&y>=0&&x<W&&y<H;
 const D4=[[1,0],[-1,0],[0,1],[0,-1]];
 const inTown=(x,y)=>TOWNS.some(t=>x>=t.x0&&x<t.x0+t.w&&y>=t.y0&&y<t.y0+t.h);
 const WILDZ=ZK.filter(k=>!ZN[k].safe);
+/** Distance from point (px,py) to the line segment (x1,y1)-(x2,y2). */
 function segDist(px,py,x1,y1,x2,y2){
   const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,((px-x1)*dx+(py-y1)*dy)/l)):0;
   return Math.hypot(px-x1-t*dx,py-y1-t*dy);
@@ -877,6 +950,7 @@ function segDist(px,py,x1,y1,x2,y2){
 const inInner=(x,y)=>{const m=11*vnoise(x,y,14,91);return x>=OX-m&&x<OX+160+m&&y>=OY-m&&y<OY+128+m;};
 const shiftSeed=s=>s[0]==='s'?['s',s[1]+OX,s[2]+OY,s[3]+OX,s[4]+OY]:s[0]==='o'?['o',s[1]+OX,s[2]+OY,s[3]]:['p',s[1]+OX,s[2]+OY];
 const OUTERZ=Object.keys(OUTER);
+/** Assigns every tile a zone id in REG from the ZSEEDS/OUTER seeds (segments, points, rings), pins lairs and shrines into their zones, merges stray fragments and applies town rectangles. */
 function layoutRegions(){
   const reg=new Uint8Array(W*H);
   const groups=[
@@ -921,6 +995,7 @@ function layoutRegions(){
 }
 /* Label spots for the world map: the zone tile nearest its centre of mass. */
 let ZLAB={};
+/** Computes a label position per zone (ZLAB) for the world map. */
 function computeLabels(){
   const sx={},sy={},n={};
   for(let i=0;i<W*H;i++){const k=ZK[REG[i]];if(ZN[k].safe)continue;sx[k]=(sx[k]||0)+i%W;sy[k]=(sy[k]||0)+((i/W)|0);n[k]=(n[k]||0)+1;}
@@ -932,6 +1007,7 @@ function computeLabels(){
   }
 }
 const zoneKeyAt=(x,y)=>ZK[REG[y*W+x]];
+/** Builds the water mask per zone from WATERCFG so zones can be wetter or drier. */
 function waterField(){
   const wat=new Uint8Array(W*H);
   for(const zk of ZK){
@@ -949,6 +1025,7 @@ function waterField(){
   }
   return wat;
 }
+/** Generates the whole world (TILES, REG, DOORS, SIGNS, NPC positions). Deterministic. */
 function build(){
   TILES=new Uint8Array(W*H);REG=new Uint8Array(W*H);DOORS={};SIGNS={};
   REG=layoutRegions();
@@ -1009,6 +1086,7 @@ function build(){
   computeLabels();
 }
 /* True when a quest-giver standing here (alongside those already placed) would wall anyone off from a lair, an altar, or a chunk of land. */
+/** Counts land tiles reachable from (bx,by); used to test whether blocking a tile cuts the map. */
 function floodCount(bx,by){
   const seen=new Uint8Array(W*H),q=[START[1]*W+START[0]];seen[q[0]]=1;
   for(let h=0;h<q.length;h++){
@@ -1020,6 +1098,7 @@ function floodCount(bx,by){
   }
   return {seen,n:q.length};
 }
+/** True when placing an NPC at (x,y) would cut off more than 2 tiles of land or a lair/altar, relative to `base`. */
 function blocksWay(x,y,base){
   const r=floodCount(x,y);
   if(base-r.n>2)return true;
@@ -1027,6 +1106,7 @@ function blocksWay(x,y,base){
   return LAIRS.some(L=>!near(L.x,L.y))||SHRINES.some(h=>!near(h.x,h.y));
 }
 /* Quest givers stand in towns at fixed spots, or on the nearest open ground in their zone. */
+/** Places quest-giver NPCs near their anchors without blocking any route. */
 function placeNPCs(){
   NPCPOS={};NPCAT={};
   const reach=reachFrom(START[0],START[1]);
@@ -1050,6 +1130,7 @@ function placeNPCs(){
     if(pos){NPCPOS[id]=pos;NPCAT[pos[0]+','+pos[1]]=id;}
   }
 }
+/** Flood fill of walkable tiles from (sx,sy); returns a visited set. */
 function reachFrom(sx,sy){
   const seen=new Uint8Array(W*H),q=[sy*W+sx];seen[q[0]]=1;
   for(let h=0;h<q.length;h++){
@@ -1060,6 +1141,7 @@ function reachFrom(sx,sy){
 }
 /* A walled-off pocket may stay as an island only if nothing essential is on it, water is most of its
    shoreline, and that water touches the mainland so a boat can launch from there. */
+/** True when a connected component is separated from the mainland and is not allowed to be cut off. */
 function isIsland(comp,seen){
   let water=0,other=0;const wset=[];
   for(const i of comp){
@@ -1087,6 +1169,7 @@ function isIsland(comp,seen){
   return false;
 }
 /* Cut a path from any walled-off pocket to the main land, except pockets that qualify as islands. */
+/** Carves bridges and paths so every important place is reachable from the start; deliberately leaves some islands. */
 function connectAll(){
   let seen=reachFrom(START[0],START[1]);
   const judged=new Uint8Array(W*H);
@@ -1117,7 +1200,22 @@ function connectAll(){
 const roomKind=id=>id.split(':')[1];
 const roomCh=(id,x,y)=>{const r=ROOMS[roomKind(id)];return r&&r[y]?r[y][x]:undefined;};
 const roomBlocked=ch=>'#SHTBCN'.includes(ch);
+/** Map position of the door that leads into interior `id`. */
 function doorPos(id){for(const k in DOORS)if(DOORS[k]===id){const [x,y]=k.split(',').map(Number);return[x,y];}return[START[0],START[1]];}
+
+</script>
+<script>
+/**
+ * game.js — core game state and rules
+ *
+ * Load order: 4th. Owns the global save object `S`, player/creature stats,
+ * movement, wild encounters, battles, binding (capture), crafting, potions,
+ * saving/loading with version migration, and the quest engine. Rendering lives
+ * in ui.js; this file only mutates state and writes to the message log.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 let S=null,LOG=[];
 const rand=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -1132,6 +1230,7 @@ const bondMult=()=>BOND*(1+fx('bond'));
 const rageC=c=>c&&c.rage>0?1.3:1;
 const needP=l=>18*l+6*l*l,needC=l=>14*l+5*l*l;
 const now=()=>(typeof performance!=='undefined'?performance.now():Date.now());
+/** Stat block (hp, atk, def, spd) of species `id` at level `l`; `alpha` applies the alpha multipliers. */
 function cstat(id,l,alpha){
   const b=SP[id].b,m=alpha?ALPHA_HP:1;
   return{hp:Math.floor((b[0]*2*l/100+l+10)*m),atk:Math.floor(b[1]*2*l/100+5),def:Math.floor(b[2]*2*l/100+5),spd:Math.floor(b[3]*2*l/100+5)};
@@ -1141,10 +1240,14 @@ const cmax=c=>cs(c).hp;
 const nm=c=>SP[c.sp].n;
 const party=()=>S.cr.filter(c=>c.p);
 const lead=()=>S.cr.find(c=>c.p&&c.hp>0)||null;
+/** Appends a line to the message log (kept to 120 lines). `k` is a CSS class: good, bad, loot. */
 function log(t,k){LOG.push({t,k:k||''});if(LOG.length>120)LOG.shift();}
+/** Like log() but skips the line when it repeats the previous message. */
 function hint(t,k){if(!LOG.length||LOG[LOG.length-1].t!==t)log(t,k||'info');}
 const dmgRaw=(L,P,A,D,m)=>((2*L/5+2)*P*A/Math.max(1,D)/50+2)*m;
+/** Rolled damage (85–100% of the raw formula, minimum 1). */
 function dmgCalc(L,P,A,D,m){return Math.max(1,Math.floor(dmgRaw(L,P,A,D,m)*(0.85+Math.random()*0.15)));}
+/** [min,max] damage the formula can roll; used for UI estimates. */
 function dmgRange(L,P,A,D,m){const r=dmgRaw(L,P,A,D,m);return[Math.max(1,Math.floor(r*.85)),Math.max(1,Math.floor(r))];}
 const effText=m=>m>1?' It is very effective.':m<1?' It is resisted.':'';
 const zoneKey=()=>S.pos.room?S.pos.room.split(':')[0]:zoneKeyAt(S.pos.x,S.pos.y);
@@ -1154,6 +1257,7 @@ const day=()=>Math.floor(S.turn/CYCLE)+1;
 const cdKey=(c,m)=>c.id+':'+m.n;
 const catchUp=(c,pl)=>clamp(1+CATCHUP_PER_LEVEL*Math.max(0,pl-c.lvl),1,CATCHUP_MAX);
 
+/** Resets the global state `S` for a new game (`hard` = no healing safety net). */
 function newGame(hard){
   S={hard:!!hard,lvl:1,xp:0,gold:20,hp:pMax(1),items:{cord:0,silver:0,gilded:0,salve:0,tonic:0,boat:0},cr:[],uid:1,
     pos:{room:'th:cottage',x:2,y:4},face:{x:1,y:0},turn:0,steps:0,kills:0,cool:0,boating:false,
@@ -1165,6 +1269,7 @@ function newGame(hard){
   log('A woman by the hearth is watching you. Walk over and press E to talk.','info');
   UI.sel=0;UI.tonic=false;render();
 }
+/** Serialises `S` to localStorage; `quiet` suppresses the log message. */
 function saveGame(quiet){
   if(!S||S.mode!=='world')return false;
   try{
@@ -1175,19 +1280,23 @@ function saveGame(quiet){
   }catch(e){if(!quiet)log('Saving is not available in this browser.','bad');return false;}
 }
 /* The explored map is one bit per tile, so a save stays small and quick even on a big world. */
+/** Compresses the explored-tiles array for saving. */
 function packVis(v){
   const n=Math.ceil(v.length/8),b=new Uint8Array(n);
   for(let i=0;i<v.length;i++)if(v[i])b[i>>3]|=1<<(i&7);
   let s='';for(let i=0;i<n;i+=8192)s+=String.fromCharCode.apply(null,b.subarray(i,i+8192));
   return btoa(s);
 }
+/** Inverse of packVis. */
 function unpackVis(str){
   const v=new Uint8Array(W*H);
   try{const bin=atob(str);for(let i=0;i<v.length&&(i>>3)<bin.length;i++)if(bin.charCodeAt(i>>3)&(1<<(i&7)))v[i]=1;}catch(e){}
   return v;
 }
+/** True when a save exists in localStorage. */
 function hasSave(){try{return !!localStorage.getItem(SAVE_KEY);}catch(e){return false;}}
 /* The world is regenerated from fixed seeds, so an old save can put you inside water or rock after an update. */
+/** Moves the player to a walkable tile if a loaded position is blocked (after world changes). */
 function fixPosition(){
   if(S.pos.room){if(!ROOMS[roomKind(S.pos.room)])S.pos={room:null,x:START[0],y:START[1]};else return;}
   const t=inb(S.pos.x,S.pos.y)?TILES[S.pos.y*W+S.pos.x]:TL.ROCK;
@@ -1202,6 +1311,7 @@ function fixPosition(){
   }
   S.pos={room:null,x:START[0],y:START[1]};
 }
+/** Loads and migrates a save (see VER). Old saves are upgraded step by step; exploration data is dropped on a version mismatch. */
 function loadGame(){
   try{
     const o=JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -1224,9 +1334,11 @@ function loadGame(){
     fixPosition();UI.sel=0;UI.tonic=false;render();return true;
   }catch(e){return false;}
 }
+/** Deletes the save. */
 function wipeSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 
 /* ---------- experience ---------- */
+/** Gives the player XP and handles level-ups. */
 function addXpPlayer(x){
   S.xp+=x;
   while(S.xp>=needP(S.lvl)){
@@ -1234,6 +1346,7 @@ function addXpPlayer(x){
     log(`You reach level ${S.lvl}.`,'good');
   }
 }
+/** Gives a companion XP, handles level-ups, move learning and evolution (cap level 50). */
 function addXpC(c,x){
   c.xp+=x;
   while(c.xp>=needC(c.lvl)&&c.lvl<50){
@@ -1250,12 +1363,16 @@ function addXpC(c,x){
 }
 
 /* ---------- movement and the turn clock ---------- */
+/** Moves the player inside an interior (cottage, healer, shop, hall...). */
 function enterRoom(id){S.pos={room:id,x:5,y:ROOMS[roomKind(id)].length-2};S.ents=[];S.arm=null;S.boating=false;}
+/** Returns the player outside the door of the current interior. */
 function exitRoom(){const [dx,dy]=doorPos(S.pos.room);S.pos={room:null,x:dx,y:dy+1};S.arm=null;reveal();}
+/** Marks tiles around the player as explored for the world map. */
 function reveal(){
   const px=S.pos.x,py=S.pos.y;
   for(let y=py-7;y<=py+7;y++)for(let x=px-7;x<=px+7;x++)if(inb(x,y)&&(x-px)*(x-px)+(y-py)*(y-py)<=49)S.vis[y*W+x]=1;
 }
+/** Moves the player by (dx,dy): collision, boats, doors, signs, NPC/lair/shrine bumping, encounters, then end of turn. */
 function move(dx,dy){
   S.face={x:dx,y:dy};S.arm=null;
   const nx=S.pos.x+dx,ny=S.pos.y+dy;
@@ -1296,6 +1413,7 @@ function move(dx,dy){
   }
   endTurn();
 }
+/** Advances time one turn: entity AI, regeneration, day/night, cooldowns. */
 function endTurn(){
   S.turn++;
   if(S.turn%(fx('regen')?4:12)===0&&S.hp<pMax(S.lvl))S.hp++;
@@ -1307,6 +1425,7 @@ function endTurn(){
 /* Creatures that would be trivial for you no longer jump you, unless you have never met their kind. */
 const ambushOK=f=>!f||!S.seen[f.sp]||foeLevelDiff(f)>-6;
 const foeLevelDiff=f=>f.lvl-S.lvl;
+/** Picks a wild species and level for a zone: honours water vs land lists, level range, evolved forms by level, elder variants and night-only species. */
 function wildFor(zk,water,lvlBonus){
   /* Gloom beasts only come out at night. */
   const z=ZN[zk],all=WILDBY[zk+'|'+(water?'w':'l')],night=isNight(),pool=all&&all.filter(e=>night||SP[e.id].t!=='Gloom');
@@ -1323,9 +1442,11 @@ function wildFor(zk,water,lvlBonus){
   if(!night&&sp.t==='Gloom'&&SP[base].t!=='Gloom'){sp=SP[base];}
   return mkFoe(sp.id,l,false);
 }
+/** Builds a foe object for species `id` at level `l` (`elite` = alpha). */
 function mkFoe(id,l,elite){const st=cstat(id,l,elite);return{sp:id,lvl:l,elite:!!elite,hp:st.hp,max:st.hp,atk:st.atk,def:st.def,spd:st.spd};}
 const foeName=f=>(f.elite?'Alpha ':'')+SP[f.sp].n;
 /* Creatures never enter towns, never leave the zone they spawned in, and aquatic ones never leave the water. */
+/** True if a wandering entity may step on (x,y). */
 function entPassable(x,y,self,aq){
   if(!inb(x,y))return false;
   const t=TILES[y*W+x],water=self?self.aq:aq;
@@ -1337,6 +1458,7 @@ function entPassable(x,y,self,aq){
   if(NPCAT[x+','+y])return false;
   return !S.ents.some(o=>o!==self&&o.x===x&&o.y===y);
 }
+/** Spawns, moves and despawns wandering creatures; handles ambushes (gated by ambushOK). */
 function tickEnts(){
   if(S.pos.room)return;
   const px=S.pos.x,py=S.pos.y,safeP=isSafe();
@@ -1375,11 +1497,13 @@ function tickEnts(){
   }
 }
 const entFoe=e=>mkFoe(e.sp,e.lvl,false);
+/** Starts a battle with entity `e`; `ambush` gives the foe the first strike. */
 function engage(e,ambush){
   startBattle(entFoe(e),{ambush:!!ambush,ent:e,zone:zoneKeyAt(e.x,e.y)});
 }
 
 /* ---------- interaction ---------- */
+/** Handles the interact key against the tile or NPC the player faces. */
 function interact(){
   const {x,y}=S.pos,f=S.face;
   const cand=[[x+f.x,y+f.y],[x,y-1],[x,y+1],[x-1,y],[x+1,y]];
@@ -1401,17 +1525,21 @@ function interact(){
   }
   log('There is nothing to use here.','info');render();
 }
+/** Shows the sign text at (x,y). */
 function readSign(x,y){
   S.sign=SIGNS[x+','+y];S.panel='sign';UI.sel=0;render();
 }
+/** Fully heals player and companions. */
 function healAll(){
   S.hp=pMax(S.lvl);for(const c of S.cr)c.hp=cmax(c);
   S.haven={room:S.pos.room,x:S.pos.x,y:S.pos.y};
 }
+/** Rests at a bed: heals and advances time. */
 function restAtBed(){
   healAll();saveGame(true);
   log('You rest on the bed. You and your companions are fully healed, and your progress is saved.','good');render();
 }
+/** Opens dialogue with the adjacent NPC. */
 function npcTalk(){
   const k=roomKind(S.pos.room);
   if(k==='cottage'){
@@ -1433,6 +1561,7 @@ function npcTalk(){
     const T=TOWNS.find(t=>t.id===zoneKey());S.shop=T.stock;S.panel='shop';render();
   }
 }
+/** Challenges the legendary at a lair at (x,y) if requirements are met. */
 function lairAction(x,y){
   const L=LAIRS.find(l=>l.x===x&&l.y===y),key=x+','+y;
   if(S.lairs[key]!==undefined&&S.turn-S.lairs[key]<480){log('The lair is empty for now. Something will return.','info');render();return;}
@@ -1446,6 +1575,7 @@ function lairAction(x,y){
   S.arm=null;
   startBattle(mkFoe(L.sp,lvl,true),{ambush:false,lair:key,zone:L.z});
 }
+/** Uses the shrine altar at (x,y): relic offering, blessing. */
 function shrineAction(x,y){
   const h=SHRINES.find(s=>s.x===x&&s.y===y);if(!h)return;
   const key='shrine:'+h.id,st=S.shrines[h.id]||(S.shrines[h.id]={});
@@ -1457,6 +1587,7 @@ function shrineAction(x,y){
   log(`${SP[h.sp].n} rises from the stone.`,'bad');
   startBattle(mkFoe(h.sp,h.lvl,false),{ambush:false,lair:key,zone:h.zone});
 }
+/** Camps in the wild: partial heal at the cost of time and ambush risk. */
 function campOut(){
   if(isSafe()){log('You are safe within these walls. Rest on a bed to heal and save.','info');render();return;}
   if(S.boating){log('You cannot camp on open water. Come ashore first.','info');render();return;}
@@ -1469,6 +1600,7 @@ function campOut(){
   tickEnts();render();
 }
 /* slot is 'you' or an index into party(). Returns true when an item was used. */
+/** Uses a pack item (`kind`) on party slot `slot`. */
 function usePack(kind,slot){
   if(kind==='salve'){
     if(S.items.salve<1){log('You have no salves left.','info');return false;}
@@ -1493,6 +1625,7 @@ function usePack(kind,slot){
 }
 
 /* ---------- battle ---------- */
+/** Creates battle state `B` against foe `f` with options `o` and switches mode. */
 function startBattle(f,o){
   S.battle={foe:f,sub:null,guard:false,over:false,cd:{},ent:o.ent||null,lair:o.lair||null,zone:o.zone||zoneKey()};
   S.mode='battle';S.panel=null;S.seen[f.sp]=1;UI.tonic=false;qLive();
@@ -1501,6 +1634,7 @@ function startBattle(f,o){
   if(o.ambush){foeAct();if(S.hp<=0){die();return;}S.battle.guard=false;}
   render();
 }
+/** The foe takes its turn in a battle. */
 function foeAct(){
   const B=S.battle,f=B.foe,sp=SP[f.sp],c=lead(),you=!c||Math.random()<.28;
   const mvs=movesFor(sp,f.lvl),ttype=you?'Plain':SP[c.sp].t;
@@ -1524,8 +1658,11 @@ function foeAct(){
     if(c.hp<=0)log(`${nm(c)} collapses.`,'bad');
   }
 }
+/** Cleans up temporary battle effects and returns to the map. */
 function battleDone(){if(S.rage>0)S.rage--;for(const c of S.cr)if(c.rage>0)c.rage--;S.battle=null;S.mode='world';S.cool=4;setLock(LOCK_END);UI.noRepeat=true;UI.tonic=false;render();}
+/** Reduces all move cooldowns of a battle by one. */
 function tickCd(B){for(const k in B.cd)if(B.cd[k]>0)B.cd[k]--;}
+/** Executes a player battle action (`kind` strike/command/bind/run/...). */
 function bAct(kind,arg){
   const B=S.battle;if(!B||B.over)return;
   const f=B.foe,c=lead();let used=true;
@@ -1558,10 +1695,12 @@ function bAct(kind,arg){
   if(S.hp<=0){die();return;}
   B.guard=false;tickCd(B);render();
 }
+/** XP value of a foe. */
 function foeXp(f){
   const mult=clamp(1+0.12*(f.lvl-S.lvl),.1,2);
   return Math.max(1,Math.floor((8*f.lvl+12)*mult*(f.elite?3:1)));
 }
+/** Awards XP, gold, loot and materials for a victory, split by `share`. */
 function rewards(f,share){
   const xp=Math.max(1,Math.floor(foeXp(f)*share*(1+fx('xp')))),pl=S.lvl;
   addXpPlayer(xp);
@@ -1574,6 +1713,7 @@ function rewards(f,share){
   if(Math.random()<.07){S.items.salve++;log('You find an Herbal Salve.','loot');}
   lootMats(f);
 }
+/** Processes a won battle: rewards, quest events, evolution checks. */
 function victory(){
   const B=S.battle,f=B.foe;B.over=true;S.kills++;
   log(`The ${foeName(f)} is defeated.`,'good');rewards(f,1);qEvent('kill',f,B.zone);
@@ -1581,11 +1721,13 @@ function victory(){
   if(B.lair)S.lairs[B.lair]=S.turn;
   battleDone();
 }
+/** Probability that binding item `item` succeeds on the current foe. */
 function bindChance(item){
   const f=S.battle.foe,sp=SP[f.sp];
   const base=sp.c*(f.elite?.6:1)*(1.15-.85*(f.hp/f.max))*IT[item].p*clamp(1-.06*(f.lvl-S.lvl),.35,1.15);
   return clamp(base*(1+fx('bind'))*(S.musk>0?1.4:1),.02,.95);
 }
+/** Attempts to bind (capture) the foe with `item`. */
 function tryBind(item){
   if(!IT[item]||!IT[item].p||S.items[item]<1)return false;
   const B=S.battle,f=B.foe;S.items[item]--;
@@ -1608,6 +1750,7 @@ function tryBind(item){
   }
   log('The cord snaps loose. The beast is still free.','bad');return true;
 }
+/** Attempts to flee the battle. */
 function tryRun(){
   const B=S.battle,f=B.foe;
   const ch=clamp(.5+(S.lvl-f.lvl)*.08+fx('flee'),.15,.95);
@@ -1618,6 +1761,7 @@ function tryRun(){
   }
   log('You cannot get away.','bad');return true;
 }
+/** Handles the player being knocked out. */
 function die(){
   const B=S.battle,f=B?B.foe:null;
   const cause=f?`Slain by a level ${f.lvl} ${foeName(f)} in ${ZN[B.zone].n}.`:'You did not survive.';
@@ -1625,6 +1769,7 @@ function die(){
   if(S.hard)wipeSave();
   render();
 }
+/** Returns the player to the last healer with a penalty. */
 function respawn(){
   S.gold=Math.floor(S.gold*.75);S.hp=pMax(S.lvl);
   for(const c of S.cr)c.hp=Math.max(1,Math.ceil(cmax(c)*.5));
@@ -1634,12 +1779,15 @@ function respawn(){
 }
 
 /* ---------- materials, recipes, rings and potions ---------- */
+/** Adds materials to the inventory. */
 function giveMats(m){
   for(const id in m){S.mats[id]=(S.mats[id]||0)+m[id];log(`You receive ${MATS[id].n}${m[id]>1?' ×'+m[id]:''}.`,'loot');}
   checkRecipes();
 }
+/** True when the inventory holds every material in `need`. */
 function hasAll(need){for(const id in need)if((S.mats[id]||0)<need[id])return false;return true;}
 /* A formula reveals itself only once you hold every ingredient it calls for. */
+/** Unlocks recipes whose ingredients are all held. */
 function checkRecipes(){
   for(const r of RECIPES){
     if(S.recipes[r.id]||!hasAll(r.need))continue;
@@ -1647,6 +1795,7 @@ function checkRecipes(){
     log(`Recipe unlocked: ${r.n}. Make it at a work table in any town.`,'good');
   }
 }
+/** Rolls material drops for foe `f` from the zone DROPS table. */
 function lootMats(f){
   const B=S.battle,tbl=B&&DROPS[B.zone];if(!tbl)return;
   const ids=Object.keys(tbl),tot=ids.reduce((a,k)=>a+tbl[k],0);
@@ -1657,6 +1806,7 @@ function lootMats(f){
     giveMats({[id]:1});
   }
 }
+/** Crafts recipe `id` (ring or potion) if affordable. */
 function craft(id){
   const r=RC[id];if(!r||!S.recipes[id])return false;
   if(r.kind==='ring'&&S.rings[id]){log(`You already forged the ${r.n}.`,'info');return false;}
@@ -1666,6 +1816,7 @@ function craft(id){
   else{S.pot[id]=(S.pot[id]||0)+1;log(`You brew a ${r.n}. Use it from Gear (G).`,'good');}
   return true;
 }
+/** Equips or unequips ring `id` (limited slots). */
 function toggleRing(id){
   if(!S.rings[id])return;
   const i=S.equip.indexOf(id);
@@ -1675,6 +1826,7 @@ function toggleRing(id){
   S.hp=Math.min(S.hp,pMax(S.lvl));
 }
 /* slot is 'you' or an index into party(). */
+/** Drinks potion `id` on party slot `slot`. */
 function usePotion(id,slot){
   const r=RC[id];if(!r||!(S.pot[id]>0))return false;
   const you=slot==='you',c=you?null:party()[slot];
@@ -1714,7 +1866,9 @@ function usePotion(id,slot){
 
 /* ---------- quests ---------- */
 const npcAt=(x,y)=>NPCAT[x+','+y]||null;
+/** Required count for a quest objective. */
 function objNeed(o){return o.t==='visit'?1:(o.n||1);}
+/** Current progress of objective `i` of quest `q`. */
 function objHave(q,i){
   const o=q.obj[i],st=S.q[q.id];
   if(o.t==='seen')return Object.keys(S.seen).length;
@@ -1726,10 +1880,12 @@ const qComplete=q=>q.obj.every((o,i)=>objDone(q,i));
 const qAvail=q=>!S.q[q.id]&&(!q.after||(S.q[q.after]&&S.q[q.after].st==='done'));
 const qOpen=q=>qAvail(q)&&S.lvl>=(q.min||1);
 const qActive=q=>S.q[q.id]&&S.q[q.id].st==='active';
+/** Logs progress when a quest objective changes. */
 function qNotify(q){
   const st=S.q[q.id];
   if(st&&st.st==='active'&&!st.r&&qComplete(q)){st.r=1;const id=q.turnin||q.giver;log(`Quest ready: ${q.title}. Hand it in to ${NPCS[id].n} (${NPCS[id].place}).`,'good');}
 }
+/** True when a battle/event matches objective `o`. */
 function qMatch(o,f,zone){
   if(o.sp&&![].concat(o.sp).includes(f.sp))return false;
   if(o.zone&&![].concat(o.zone).includes(zone))return false;
@@ -1738,6 +1894,7 @@ function qMatch(o,f,zone){
   if(o.minLvl&&f.lvl<o.minLvl)return false;
   return true;
 }
+/** Feeds a game event (kill, item, bind...) into all active quests. */
 function qEvent(mode,f,zone){
   for(const q of QUESTS){
     if(!qActive(q))continue;const st=S.q[q.id];
@@ -1749,7 +1906,9 @@ function qEvent(mode,f,zone){
     qNotify(q);
   }
 }
+/** Re-evaluates live objectives (seen/caught counts). */
 function qLive(){for(const q of QUESTS)if(qActive(q)&&q.obj.some(o=>o.t==='seen'||o.t==='caught'))qNotify(q);}
+/** Completes visit objectives when the player stands on the target. */
 function qVisit(){
   if(S.pos.room)return;
   const zk=zoneKeyAt(S.pos.x,S.pos.y);
@@ -1763,6 +1922,7 @@ function qVisit(){
     qNotify(q);
   }
 }
+/** Counts sailing progress for sail objectives. */
 function qSail(){
   for(const q of QUESTS){
     if(!qActive(q))continue;const st=S.q[q.id];
@@ -1773,6 +1933,7 @@ function qSail(){
     qNotify(q);
   }
 }
+/** Marks a quest as complete-ready. */
 function qMark(id){
   let m='';
   for(const q of QUESTS){
@@ -1781,6 +1942,7 @@ function qMark(id){
   }
   return m;
 }
+/** Opens dialogue with NPC `id`: offers, progress or turn-in. */
 function talkTo(id){
   const n=NPCS[id];S.metNpc[id]=1;
   const ready=QUESTS.find(q=>qActive(q)&&(q.turnin||q.giver)===id&&qComplete(q));
@@ -1798,12 +1960,14 @@ function talkTo(id){
   }
   t.npc=id;S.talk=t;S.panel='talk';S.arm=null;render();
 }
+/** Accepts quest `id`. */
 function qAccept(id){
   const q=QB[id];if(!qAvail(q))return;
   S.q[id]={st:'active',p:q.obj.map(()=>0)};
   log(`Quest accepted: ${q.title}.`,'good');
   qVisit();qNotify(q);
 }
+/** Hands in quest `id` and pays the reward. */
 function qTurnIn(id){
   const q=QB[id];if(!qActive(q)||!qComplete(q))return false;
   S.q[id].st='done';
@@ -1817,12 +1981,26 @@ function qTurnIn(id){
   saveGame(true);
   return true;
 }
+
+</script>
+<script>
+/**
+ * arena.js — day/night clock, rivals and the tournament (Proving Hall) system
+ *
+ * Load order: 5th. Contains the day/night cycle, rank ladder (E to S),
+ * generated rival trainers and teams, the 3v3 duel engine and AI (including
+ * blind lead selection), bracket simulation and tournament flow.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 /* ===== Day and night, the tournament calendar, rival trainers, and the arena duel engine ===== */
 
 /* A day is DAYLEN turns of light followed by DAYLEN turns of night. The calendar day number ticks over at dawn. */
 const DAYLEN=120,CYCLE=DAYLEN*2;
 const isNight=()=>S.turn%CYCLE>=DAYLEN;
 /* 0 in daylight, 1 in deep night, with a short ramp at dusk and dawn. */
+/** 0..1 darkness level for tick `t` with smooth dusk/dawn. */
 function nightAmt(t){
   const p=((t%CYCLE)+CYCLE)%CYCLE,R=12;
   if(p<DAYLEN-R)return 0;
@@ -1845,6 +2023,7 @@ const todayEvent=r=>nextEvent(r,day())===day();
 const roundNames=size=>size===16?['Round of 16','Quarterfinal','Semifinal','Final']:['Quarterfinal','Semifinal','Final'];
 
 /* ---------- rival trainers ---------- */
+/** Seeded PRNG (mulberry32) used to generate rivals reproducibly. */
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 const RIVN1=['Aldric','Bryn','Cassia','Dorrin','Elowen','Fenn','Garrick','Hester','Isolde','Jory','Kestrel','Lorcan','Maeve','Nell','Osric','Perrin','Quill','Rhosyn','Silas','Tamsin','Ulric','Vesper','Wren','Xan','Yarrow','Zeb','Alma','Bodhi','Corwin','Delphine'];
 const RIVN2=['Ashby','Blackthorn','Cobb','Dunmore','Fairweather','Gorse','Hale','Ironside','Juniper','Kettleby','Lowry','Marsh','Nettlefold','Oakes','Pike','Quarrel','Rook','Strand','Thatch','Underhill','Vane','Wicker','Yewdale','Brackenridge','Crowe','Dray','Emberly','Flint','Greaves','Holloway'];
@@ -1854,6 +2033,7 @@ const RIVL=['Better luck next time. Truly. Eat something.','That is why we train
 const POOL=[20,20,20,20,12,12];
 const NOISE=[.30,.22,.15,.08,.03,0];   // chance a trainer fumbles into a random move, by rank
 const RIV=[],RIVBY={};
+/** Chooses a rival team member of type `type` appropriate for rank `r` and level `lv`, avoiding `used`. */
 function rivSpecies(rng,type,r,lv,used){
   const rr=[[1,2],[1,2],[1,3],[2,3],[2,4],[3,4]][r],cand=[];
   for(const L of LINES){
@@ -1891,20 +2071,24 @@ function rivSpecies(rng,type,r,lv,used){
 
 /* ---------- the duel engine ---------- */
 let DSEQ=1;
+/** Creates a duel unit from species, level and alpha flag. */
 function mkUnit(sp,lvl,alpha,src){
   const st=src?cs(src):cstat(sp,lvl,alpha);
   return{id:src?'m'+src.id:'r'+(DSEQ++),sp,lvl,alpha:!!alpha,max:st.hp,hp:st.hp,atk:st.atk,def:st.def,spd:st.spd,cd:{},mult:src?bondMult()*rageC(src):BOND};
 }
+/** Creates a duel state between teams `a` and `b` at rank `rk`; `mute` disables the log (simulated matches). */
 function newDuel(a,b,rk,mute){return{s:[{u:a,a:0},{u:b,a:0}],tr:['brawler','brawler'],nm:'Rival',rk,g:[false,false],t:0,over:false,win:-1,lg:[],need:false,auto:!!mute,mute:!!mute};}
 const dlg=(D,t,k)=>{if(!D.mute){D.lg.push({t,k:k||''});if(D.lg.length>40)D.lg.shift();}};
 const dn=(D,i,u)=>(i===0?'Your ':D.nm+"'s ")+SP[u.sp].n;
 const alive=sd=>sd.u.filter(x=>x.hp>0).length;
 /* Choose who steps in after a faint: the beast with the best type matchup and the most health. */
+/** AI pick of the best bench unit after a faint. */
 function bestReplacement(D,i){
   const sd=D.s[i],o=D.s[1-i].u[D.s[1-i].a];let best=-1,bs=-1;
   sd.u.forEach((x,k)=>{if(x.hp<=0)return;const s=tmult(SP[x.sp].t,SP[o.sp].t)/tmult(SP[o.sp].t,SP[x.sp].t)+x.hp/x.max;if(s>bs){bs=s;best=k;}});
   return best;
 }
+/** AI chooses a move for side `i`. */
 function aiAct(D,i){
   const sd=D.s[i],ot=D.s[1-i],u=sd.u[sd.a],o=ot.u[ot.a],tr=D.tr[i],noise=NOISE[D.rk]||0;
   const mvs=movesFor(SP[u.sp],u.lvl).map((m,k)=>({m,k})).filter(x=>!(u.cd[x.m.n]>0));
@@ -1923,6 +2107,7 @@ function aiAct(D,i){
   return{k:'move',i:atk.reduce((a,b)=>est(b)>est(a)?b:a).k};
 }
 /* One turn: swaps and guards happen first, then attacks in order of speed. A beast that faints cannot act. */
+/** Resolves one turn of a duel given both sides' actions `acts`. */
 function duelTurn(D,acts){
   const SD=D.s;D.g=[false,false];
   for(let i=0;i<2;i++){
@@ -1963,6 +2148,7 @@ function duelTurn(D,acts){
     dlg(D,'The judges call time and score the bout on remaining health.','info');
   }
 }
+/** Simulates a best-of series between two rivals. */
 function simSeries(ra,rb,bo,rk){
   const sc=[0,0],need=Math.ceil(bo/2);
   while(sc[0]<need&&sc[1]<need){
@@ -1975,10 +2161,12 @@ function simSeries(ra,rb,bo,rk){
 }
 
 /* ---------- the bracket ---------- */
+/** Returns a shuffled copy of an array. */
 function shuffled(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 const isYou=m=>m.a==='you'||m.b==='you';
 const myMatch=T=>T.rounds[T.rd].find(m=>isYou(m)&&m.w<0)||null;
 const pairUp=ids=>{const o=[];for(let i=0;i<ids.length;i+=2)o.push({a:ids[i],b:ids[i+1],w:-1,sc:[0,0]});return o;};
+/** Makes sure the player has a valid 3-creature squad. */
 function ensureSquad(){
   const L=S.lg;L.squad=L.squad.filter(id=>S.cr.some(c=>c.id===id));
   if(!L.squad.length)L.squad=party().slice(0,3).map(c=>c.id);
@@ -1986,20 +2174,26 @@ function ensureSquad(){
 }
 /* Every visit to the hall starts from your current party, so a squad picked on an earlier visit never lingers. */
 const hallList=()=>{const pt=S.cr.filter(c=>c.p),st=S.cr.filter(c=>!c.p).sort((a,b)=>b.lvl-a.lvl);return pt.concat(st);};
+/** Sets the squad from the current party. */
 function squadFromParty(){S.lg.squad=party().slice(0,3).map(c=>c.id);if(!S.lg.squad.length)S.lg.squad=S.cr.slice(0,3).map(c=>c.id);}
+/** Sets the squad to the three highest-level creatures. */
 function squadBest(){S.lg.squad=S.cr.slice().sort((a,b)=>b.lvl-a.lvl).slice(0,3).map(c=>c.id);}
+/** Opens the Proving Hall panel. */
 function openHall(){squadFromParty();S.panel='hall';UI.sel=0;render();}
+/** Adds/removes creature `id` at squad position `i`. */
 function toggleSquad(i,id){
   const c=id!==undefined?S.cr.find(x=>x.id===id):hallList()[i];if(!c)return;
   const q=S.lg.squad,k=q.indexOf(c.id);
   if(k>=0)q.splice(k,1);else if(q.length<3)q.push(c.id);else log('Your squad already has three. Remove someone first.','info');
 }
 const canEnter=()=>todayEvent(S.rank)&&!S.lg.ent[S.rank+':'+day()];
+/** Waits until the next tournament day. */
 function restUntilEvent(){
   const d=nextEvent(S.rank,day()+(todayEvent(S.rank)?1:0));
   S.turn=(d-1)*CYCLE;
   log(`You sleep on a hall cot until dawn on day ${d}.`,'info');
 }
+/** Registers the player and generates the bracket. */
 function enterTournament(){
   ensureSquad();
   const r=S.rank,R=RANKS[r];
@@ -2015,6 +2209,7 @@ function enterTournament(){
   log(`You sign the roll for the ${R.n}. ${R.size} entrants, ${R.bo===3?'every bout best of three':'one bout each round'}. Registration is final.`,'info');
   render();
 }
+/** Simulates all matches in the current round that do not involve the player. */
 function simRound(T){
   for(const m of T.rounds[T.rd]){
     if(m.w>=0||isYou(m))continue;
@@ -2022,6 +2217,7 @@ function simRound(T){
   }
 }
 /* Play out every match that does not involve you. Returns true when the whole bracket is decided. */
+/** Applies results for the round and advances. */
 function settle(T){
   for(;;){
     simRound(T);
@@ -2032,6 +2228,7 @@ function settle(T){
     T.rounds.push(pairUp(win));T.rd++;
   }
 }
+/** Moves to the player's next match or ends the tournament. */
 function bracketNext(){
   const T=S.tour;
   if(T.champ||!myMatch(T)){concludeTour();T.phase='final';return;}
@@ -2039,6 +2236,7 @@ function bracketNext(){
   T.opp=RIVBY[m.a==='you'?m.b:m.a];T.sr={w:[0,0],g:1};T.phase='pre';
 }
 /* A rival picks a lead from what it can see of your squad: species, types and levels only. It never sees which beast you chose. */
+/** AI selects its lead given what it has seen of the player's team (blind simultaneous pick). */
 function aiLead(team,seen,rk,tr){
   const noise=NOISE[rk]||0;
   if(Math.random()<noise||(tr==='gambler'&&Math.random()<.35))return Math.floor(Math.random()*team.length);
@@ -2051,7 +2249,9 @@ function aiLead(team,seen,rk,tr){
   });
   return best;
 }
+/** Sets the player's lead choice (index `k`) during the pre-duel phase. */
 function pickLead(k){const T=S.tour;if(T&&T.phase==='pre'&&k>=0&&k<T.squad.length)T.lead=k;}
+/** Locks in both leads, marks opposing species as seen and starts the duel. */
 function gameBegin(){
   const T=S.tour,mine=T.squad.map(id=>S.cr.find(c=>c.id===id)).filter(Boolean);
   const D=newDuel(mine.map(c=>mkUnit(c.sp,c.lvl,c.alpha,c)),T.opp.team.map(t=>mkUnit(t.sp,t.lvl,t.alpha)),T.r,false);
@@ -2062,6 +2262,7 @@ function gameBegin(){
   dlg(D,`Both leads are revealed. You send out ${SP[D.s[0].u[my].sp].n}. ${T.opp.name} sends out ${SP[D.s[1].u[their].sp].n}.`,'info');
   T.D=D;T.phase='duel';
 }
+/** Player action in a duel. */
 function duelAct(kind,i){
   const T=S.tour,D=T.D;if(!D||D.over)return;
   const me=D.s[0];
@@ -2081,6 +2282,7 @@ function duelAct(kind,i){
   duelTurn(D,[a,aiAct(D,1)]);
   if(D.over)gameEnd();
 }
+/** Ends one duel of the series. */
 function gameEnd(){
   const T=S.tour,D=T.D,sr=T.sr;
   sr.w[D.win]++;
@@ -2088,11 +2290,13 @@ function gameEnd(){
   dlg(D,D.win===0?'You take the game.':'You lose the game.',D.win===0?'good':'bad');
   T.phase='post';
 }
+/** Advances from the post-duel screen. */
 function postNext(){
   const T=S.tour,sr=T.sr,need=Math.ceil(T.bo/2);
   if(sr.w[0]>=need||sr.w[1]>=need){matchEnd(sr.w[0]>sr.w[1]);return;}
   sr.g++;T.phase='pre';
 }
+/** Finishes a match (`forfeit` if the player withdrew). */
 function matchEnd(you,forfeit){
   const T=S.tour,m=myMatch(T),sr=T.sr||{w:[0,0]};
   if(m){
@@ -2103,12 +2307,14 @@ function matchEnd(you,forfeit){
   T.D=null;T.phase='bracket';T.last={you,opp:T.opp,w:sr.w.slice(),ff:!!forfeit};
   settle(T);
 }
+/** Withdraws from the tournament. */
 function withdraw(){
   const T=S.tour;
   if(myMatch(T)){const m=myMatch(T);if(!T.opp)T.opp=RIVBY[m.a==='you'?m.b:m.a];matchEnd(false,true);}
   concludeTour();T.phase='final';
 }
 /* Rewards are applied once, when the bracket is over for you. */
+/** Awards prizes/rank progress and archives the tournament. */
 function concludeTour(){
   const T=S.tour;if(T.res)return;
   if(!T.champ)settle(T);
@@ -2136,19 +2342,36 @@ function concludeTour(){
   log(`${R.n}: ${place}. You earn ${gold} gold and ${px} experience.`,champ?'good':'info');
   if(ranked)log(`You are promoted to Rank ${RANKS[S.rank].k}.`,'good');
 }
+/** Leaves the tournament screens. */
 function exitTour(){
   S.tour=null;S.mode='world';S.panel=null;S.cool=4;
   if(S.rage>0)S.rage--;for(const c of S.cr)if(c.rage>0)c.rage--;
   UI.noRepeat=true;setLock(LOCK_END);saveGame(true);render();
 }
+
+</script>
+<script>
+/**
+ * art.js — procedural SVG portraits for every creature
+ *
+ * Load order: 6th. artBuild(id) draws a creature from its species definition
+ * (body shape, colours, features) as an SVG string; results are cached by the
+ * caller.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 /* ---------- creature artwork ----------
    Every creature is drawn from a body plan plus a few features that pile up as it evolves, in the colors of its type.
    Artwork appears on the battle, companion, bestiary and similar screens. The main map never uses it. */
+/** Parses #RRGGBB into [r,g,b]. */
 function hexRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+/** Lightens/darkens a hex colour by amount `a`. */
 function shade(h,a){
   const r=hexRGB(h).map(v=>Math.max(0,Math.min(255,Math.round(a<0?v*(1+a):v+(255-v)*a))));
   return `rgb(${r[0]},${r[1]},${r[2]})`;
 }
+/** Stable string hash used for per-species variation. */
 function strHash(s){let h=7;for(let i=0;i<s.length;i++)h=(Math.imul(h,31)+s.charCodeAt(i))|0;return h>>>0;}
 const TYPELIST=Object.keys(TYPE).filter(k=>k!=='Plain');
 /* anchors: head [x,y,r], back [x,y], tail [x,y], spine points for spikes */
@@ -2160,7 +2383,9 @@ const PLANS={
  fish:{head:[68,52,10],back:[48,38],tail:[20,54],spine:[[36,40],[44,38],[52,38],[60,41]]},
  biped:{head:[50,28,12],back:[50,40],tail:[36,78],spine:[[38,44],[62,44],[44,38],[56,38]]},
  wisp:{head:[50,52,14],back:[50,20],tail:[50,88],spine:[[50,18],[40,26],[60,26]]}};
+/** SVG triangle polygon string. */
 function tri(a,b,c,d,e,f,fill){return `<polygon points="${a},${b} ${c},${d} ${e},${f}" fill="${fill}"/>`;}
+/** Builds the SVG portrait for species `id`. */
 function artBuild(id){
   const sp=SP[id],plan=PLANS[sp.art.plan],F=new Set(sp.art.feats),h=strHash(id);
   const base=TYPE[sp.t][0],dk=shade(base,-.32),lt=shade(base,.38);
@@ -2244,9 +2469,23 @@ function artBuild(id){
 const ARTC={};
 const artSVG=id=>ARTC[id]||(ARTC[id]=artBuild(id));
 const artHTML=(id,px,cls)=>`<span class="art ${cls||''}" style="width:${px}px;height:${px}px">${artSVG(id)}</span>`;
+
+</script>
+<script>
+/**
+ * arenaui.js — HTML for the tournament screens
+ *
+ * Load order: 7th. Pure string builders (calendar, hall, bracket, pre-duel
+ * lead pick, duel, post-match, final) plus the Proving Hall dock buttons and
+ * keyboard handler.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 /* ===== Tournament screens: town sign, Proving Hall, bracket and arena ===== */
 const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
 
+/** Tournament calendar HTML. */
 function calHTML(){
   const d=day();
   return `<div class="list">${RANKS.map((R,r)=>{
@@ -2256,6 +2495,7 @@ function calHTML(){
     return `<div class="item cal ${r===S.rank?'mine':''}"><span class="rk">${R.k}</span><div class="grow"><b>${R.n}</b> ${st}<div class="hint">${R.size} entrants · ${R.bo===3?'every bout best of three':'one bout per round'} · rivals about Lv ${R.lv[0]}–${R.lv[1]}</div></div><div class="when">${when}</div></div>`;
   }).join('')}</div>`;
 }
+/** Proving Hall sign text. */
 function signHTML(){
   const night=isNight(),n=turnsToShift();
   return `<h2>${ZN[S.sign].n} notice post</h2>
@@ -2264,7 +2504,9 @@ function signHTML(){
   <p class="hint">Every cup is listed, but you may only enter the one for your current rank. Be at a town's Proving Hall on the day itself and speak to the registrar. Win your rank's cup to move up, from E through D, C, B and A to S.</p>
   <p class="hint">${ZN[S.sign].n}: no creature may be set upon within these walls. Wild beasts cannot enter, and you cannot be ambushed here.</p>`;
 }
+/** Total [wins,losses] of the player's tournament record. */
 function recTotals(){let w=0,l=0;for(const k in S.lg.rec){w+=S.lg.rec[k][0];l+=S.lg.rec[k][1];}return[w,l];}
+/** Hall panel: squad selection and entry. */
 function hallHTML(){
   ensureSquad();
   const r=S.rank,R=RANKS[r],d=day(),nd=nextEvent(r,d),today=nd===d,entered=S.lg.ent[r+':'+d];
@@ -2282,6 +2524,7 @@ function hallHTML(){
   <p class="mono">Rank ${R.k} · ${w} bouts won, ${l} lost${titles?' · Cups: '+titles:''}</p>
   <h3>Calendar</h3>${calHTML()}`;
 }
+/** Dock buttons for the hall. */
 function hallDock(){
   const ok=canEnter()&&S.lg.squad.length>0;
   return `<div class="acts">${btnSub('Enter','Sign the roll',ok?'':'not today','pri',!ok)}${btn('u','Use my party')}${btn('b','Pick my best three')}${btn('r','Sleep until the next event')}${btn('Escape','Leave')}</div>`;
@@ -2289,6 +2532,7 @@ function hallDock(){
 
 /* ---------- arena screens ---------- */
 const pName=id=>id==='you'?'<b>You</b>':RIVBY[id].name;
+/** Bracket view of tournament `T`. */
 function bracketHTML(T){
   const names=roundNames(T.size),m=myMatch(T);
   let banner='';
@@ -2304,7 +2548,9 @@ function bracketHTML(T){
   else next='<p>Your event is over.</p>';
   return `<h2>Bracket</h2>${banner}${next}<div class="rounds">${grid}</div>${T.wd?'<p class="hint bad">Press Esc again to withdraw from the event. Registration cannot be undone.</p>':''}`;
 }
+/** One row for a team member. */
 function teamRow(sp,lvl,alpha){const s=SP[sp];return `<div class="item"><div class="art-row">${artHTML(sp,48,'port')}</div><div class="grow"><b>${s.n}</b> ${alpha?'<span class="ab">Alpha</span>':''} <span class="dim">Lv ${lvl}</span> ${tchip(s.t)}</div></div>`;}
+/** Pre-duel screen: opposing team and lead selection. */
 function preHTML(T){
   const o=T.opp,rc=S.lg.rec[o.id],need=Math.ceil(T.bo/2);
   const mine=T.squad.map(id=>S.cr.find(c=>c.id===id)).filter(Boolean);
@@ -2314,23 +2560,27 @@ function preHTML(T){
   <h3>Their team</h3><div class="list">${o.team.map(t=>teamRow(t.sp,t.lvl,t.alpha)).join('')}</div>
   <h3>Choose your lead</h3><p class="hint">Pick who steps out first. ${o.name.split(' ')[0]} is choosing at the same time, judging only by your squad, and neither of you sees the other's pick until you both commit.</p><div class="cmds">${mine.map((c,i)=>`<button class="b ${(T.lead||0)===i?'pri':''}" data-k="${i+1}"><kbd>${i+1}</kbd> ${SP[c.sp].n}${(T.lead||0)===i?' · your lead':''}<span class="sub">Lv ${c.lvl} · ${SP[c.sp].t}</span></button>`).join('')}</div>`;
 }
+/** Health/status block for side `i` of duel `D`. */
 function unitBlock(D,i){
   const sd=D.s[i],u=sd.u[sd.a],sp=SP[u.sp];
   const pips=sd.u.map(x=>`<i class="pip ${x.hp>0?'on':''}"></i>`).join('');
   return `<div class="unit ${i?'foe':'you'}">${artHTML(u.sp,i?104:80,'port')}<div><div class="nm">${sp.n} <span class="dim">Lv ${u.lvl}</span> ${tchip(sp.t)} ${u.alpha?'<span class="ab">Alpha</span>':''}</div><div class="lab"><span>${i?D.nm:'You'} ${pips}</span><span>${u.hp}/${u.max}</span></div>${bar(u.hp/u.max)}</div></div>`;
 }
+/** Active duel screen. */
 function duelHTML(T){
   const D=T.D,sr=T.sr;
   return `<div class="bt"><p class="mono">${T.opp.name}${T.bo===3?` · game ${sr.g} · you ${sr.w[0]}, them ${sr.w[1]}`:''}</p>${unitBlock(D,1)}
   <div class="scene" aria-live="polite">${D.lg.slice(-5).map(l=>`<p>${l.t}</p>`).join('')}</div>${unitBlock(D,0)}
   ${D.yield?'<p class="hint bad">Press Esc again to forfeit this match.</p>':''}</div>`;
 }
+/** Between-duels summary. */
 function postHTML(T){
   const D=T.D,sr=T.sr,need=Math.ceil(T.bo/2),done=sr.w[0]>=need||sr.w[1]>=need;
   return `<h2>${D.win===0?'You take the game':'You lose the game'}</h2>
   <div class="scene">${D.lg.slice(-4).map(l=>`<p>${l.t}</p>`).join('')}</div>
   <p class="mono">${T.bo===3?`Games: you ${sr.w[0]}, ${T.opp.name.split(' ')[0]} ${sr.w[1]}.`:''} ${done?(sr.w[0]>sr.w[1]?'The bout is yours.':'The bout is lost.'):'Everyone is restored for the next game.'}</p>`;
 }
+/** End-of-tournament summary. */
 function finalHTML(T){
   const r=T.res;
   return `<h2>${r.champ?'You are the champion':r.place}</h2>
@@ -2338,11 +2588,13 @@ function finalHTML(T){
   <h3>Your winnings</h3><div class="list">${r.lines.map(x=>`<div class="item">${x}</div>`).join('')}</div>
   <h3>Final bracket</h3><div class="rounds">${T.rounds.map((rd,k)=>`<div class="rnd"><h3>${roundNames(T.size)[k]}</h3>${rd.map(x=>`<div class="mt ${isYou(x)?'me':''}"><span class="${x.w===0?'w':'l'}">${pName(x.a)}</span><span class="vs">${x.sc[0]}–${x.sc[1]}</span><span class="${x.w===1?'w':'l'}">${pName(x.b)}</span></div>`).join('')}</div>`).join('')}</div>`;
 }
+/** Dispatches to the screen for the current tournament phase. */
 function arenaHTML(){
   const T=S.tour,R=RANKS[T.r];
   const head=`<div class="hint arhead">Rank ${R.k} · ${R.n}${T.phase==='final'?'':' · '+roundNames(T.size)[T.rd]}</div>`;
   return head+({bracket:bracketHTML,pre:preHTML,duel:duelHTML,post:postHTML,final:finalHTML})[T.phase](T);
 }
+/** Dock buttons for the current tournament phase. */
 function arenaDock(){
   const T=S.tour;
   if(T.phase==='bracket')return `<div class="acts">${btn('Enter',T.champ||!myMatch(T)?'See results':'To the arena','pri')}${btn('Escape',T.wd?'Confirm withdraw':'Withdraw','danger')}</div>`;
@@ -2363,6 +2615,7 @@ function arenaDock(){
   const canSwap=me.u.some((x,i)=>i!==me.a&&x.hp>0);
   return `<div class="cmds">${mv}</div><div class="acts" style="margin-top:6px">${btn('g','Guard')}${btnSub('w','Swap',canSwap?'':'no one left','',!canSwap)}${btn('Escape',D.yield?'Confirm forfeit':'Forfeit','danger')}</div>`;
 }
+/** Key handler for tournament screens (digits pick lead, Enter locks in). */
 function arenaKey(k){
   const T=S.tour;if(!T)return;
   const go=k==='Enter'||k===' '||k==='e';
@@ -2393,7 +2646,20 @@ function arenaKey(k){
   else if(k==='w'&&D.s[0].u.some((x,i)=>i!==D.s[0].a&&x.hp>0))D.sub='swap';
   render();
 }
+
+</script>
+<script>
+/**
+ * evo.js — evolution celebration screen
+ *
+ * Load order: 8th. Records what changed when a creature evolves (stats, moves,
+ * type) and renders the animated evolution panel.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 /* ===== Evolution: a record is queued whenever a companion evolves, and a celebration screen plays it back ===== */
+/** Captures a before/after record (stats, moves, type) of creature `c` evolving from `from`. */
 function evoRecord(c,from,b4,mv4,hp4,fresh){
   const to=c.sp,sp=SP[to];
   (S.evoQ=S.evoQ||[]).push({id:c.id,from,to,lvl:c.lvl,alpha:!!c.alpha,b4,af:cs(c),mv4,mv:movesFor(sp,c.lvl).map(m=>({n:m.n,t:m.t,heal:!!m.heal})),hp4,hp:c.hp,max:cmax(c),fresh,next:sp.evo?{lvl:sp.evo[0],id:sp.evo[1]}:null});
@@ -2402,6 +2668,7 @@ const typeStrong=t=>STRONG[t]||[];
 const typeWeak=t=>Object.keys(STRONG).filter(k=>STRONG[k].includes(t));
 const listOf=a=>a.length<2?(a[0]||'nothing'):a.length===2?a.join(' and '):a.slice(0,-1).join(', ')+', and '+a[a.length-1];
 /* Explain what a type change means: old and new weaknesses, what it now beats, and any matchup that cuts both ways. */
+/** Explains how the type change between `a` and `b` alters strengths and weaknesses. */
 function typeNote(a,b){
   const ws=typeWeak(b),st=typeStrong(b),both=st.filter(t=>ws.includes(t));
   const stOnly=st.filter(t=>!both.includes(t)),wkOnly=ws.filter(t=>!both.includes(t));
@@ -2409,6 +2676,7 @@ function typeNote(a,b){
   if(both.length)h+=` ${b} and ${both.join(' and ')} beat each other, so expect that matchup to cut both ways.`;
   return h;
 }
+/** Evolution screen HTML. */
 function evolveHTML(){
   const E=S.evoQ[0],A=SP[E.from],B=SP[E.to],more=S.evoQ.length-1;
   const sparks=Array.from({length:14},(_,i)=>`<i class="spark" style="--a:${Math.round(i*360/14)}deg"></i>`).join('');
@@ -2433,10 +2701,24 @@ function evolveHTML(){
     <ul class="evfacts">${fx.map(x=>`<li>${x}</li>`).join('')}</ul>
    </div>${more?`<p class="hint">${more} more ${more===1?'evolution':'evolutions'} waiting.</p>`:''}</div>`;
 }
+/** Dock for the evolution screen. */
 function evolveDock(){
   const more=S.evoQ.length-1;
   return `<div class="acts">${btn('Enter',more?`Continue (${more} more)`:'Continue','pri')}</div>`;
 }
+
+</script>
+<script>
+/**
+ * ui.js — rendering, panels, input and start-up
+ *
+ * Load order: 9th (last). Canvas drawing for the local map and world map,
+ * every panel's HTML, the control dock, keyboard/click handling and the
+ * bootstrap code at the bottom of the file that starts the game.
+ *
+ * All files are classic scripts sharing one global scope (no modules); see README.
+ */
+'use strict';
 const $=s=>document.querySelector(s);
 if(typeof CanvasRenderingContext2D!=='undefined'&&CanvasRenderingContext2D&&!CanvasRenderingContext2D.prototype.roundRect)CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h){this.rect(x,y,w,h);};
 const UI={sel:0,rel:null,newConfirm:false,lockUntil:0,lockT:null,noRepeat:false,tonic:false,ftab:'ring',gmode:null,gpot:null};
@@ -2450,6 +2732,7 @@ const bar=(p,cls)=>`<div class="bar ${cls||''}"><i style="width:${clamp(p,0,1)*1
 const rng=r=>r[0]===r[1]?`${r[0]}`:`${r[0]}–${r[1]}`;
 
 /* Ignore all input for a moment so keys still in your fingers cannot trigger battle commands. */
+/** Ignores input for `ms` milliseconds (prevents accidental key repeats). */
 function setLock(ms){
   UI.lockUntil=now()+ms;
   const d=$('#dock');if(d&&d.classList)d.classList.add('locked');
@@ -2458,6 +2741,7 @@ function setLock(ms){
 }
 
 /* ---------- palette ---------- */
+/** True when the page is using the dark theme. */
 function isDark(){const a=document.documentElement.getAttribute('data-theme');return a==='dark'||(a!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);}
 const PAL={
  light:{z:{green:['#BFD8A0','#76A04E'],wood:['#9CC092','#4C8250'],crag:['#CDC3B6','#938676'],mire:['#9DB8A6','#5C8472'],frost:['#E1EBF1','#A5BFCF'],cinder:['#D2AB93','#97614A'],drake:['#B5AEC6','#7468A0'],dunes:['#E6D3A0','#C4A55F'],gloam:['#8EA08A','#4E6650'],shore:['#E8DDB0','#C9B46E'],mangrove:['#8FB08A','#4F7F55'],bonefield:['#E4E0D6','#B8B2A0'],mesa:['#D9A98A','#B27250'],mistvale:['#B9CBD6','#7C9AAD'],obsidian:['#9A96A6','#5E5A70'],deepwood:['#6F9A6C','#2F5A3A'],tors:['#C7C3CC','#8E8A99'],witchfen:['#A8A0C8','#6D5F9E'],glacier:['#E6F2F8','#B9D8EA'],starfall:['#E8D9F0','#B896D0'],worldscar:['#6E5E58','#8A4A36']},
@@ -2471,6 +2755,7 @@ const PAL={
 const pal=()=>isDark()?PAL.dark:PAL.light;
 
 /* ---------- map drawing ---------- */
+/** Draws one overworld tile. */
 function drawTile(c,sx,sy,ts,t,zk,wx,wy,P){
   const z=P.z[zk]||P.road,u=ts/10;
   const bg=(t===TL.ROAD||t===TL.FENCE||t===TL.DOOR||t===TL.SIGN)?P.road[0]:(t===TL.WATER||t===TL.BRIDGE)?P.water[0]:t===TL.LAVA?P.lava[0]:z[0];
@@ -2514,6 +2799,7 @@ function drawTile(c,sx,sy,ts,t,zk,wx,wy,P){
       c.strokeStyle='#D6402F';c.beginPath();c.ellipse(sx+u*5,sy+u*5.5,u*4,u*3.4,0,0,7);c.stroke();break;
   }
 }
+/** Draws one interior tile. */
 function drawRoomTile(c,sx,sy,ts,ch,P,x,y){
   const u=ts/10;
   if(ch==='#'){c.fillStyle=P.wall;c.fillRect(sx,sy,ts,ts);c.fillStyle=P.wallHi;c.fillRect(sx,sy,ts,u*.8);return;}
@@ -2528,14 +2814,17 @@ function drawRoomTile(c,sx,sy,ts,ch,P,x,y){
     case'D':c.fillStyle=P.door;c.fillRect(sx+u*1.5,sy+u*3,u*7,u*7);break;
   }
 }
+/** Sizes a canvas to its CSS size and device pixel ratio. */
 function fitCanvas(cv){
   const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(20,Math.round(r.width*dpr/COLS))*COLS;
   if(cv.width!==w){cv.width=w;cv.height=w/COLS*ROWS;}
 }
+/** Draws a filled circle with a glyph (creatures, NPCs). */
 function disc(c,x,y,r,fill,ink,glyph,ts){
   c.fillStyle=fill;c.beginPath();c.arc(x,y,r,0,7);c.fill();
   c.fillStyle=ink;c.font=`700 ${Math.floor(ts*.5)}px "IBM Plex Mono",ui-monospace,monospace`;c.fillText(glyph,x,y+ts*.03);
 }
+/** Draws a wandering creature. */
 function drawEnt(c,e,sx,sy,ts,P){
   const sp=SP[e.sp],tc=TYPE[sp.t],u=ts/10,dg=danger(e.lvl,S.lvl);
   c.fillStyle=tc[0];c.beginPath();c.roundRect(sx+u*1,sy+u*1,u*8,u*8,u*2);c.fill();
@@ -2545,6 +2834,7 @@ function drawEnt(c,e,sx,sy,ts,P){
   c.fillStyle=dg.c;c.beginPath();c.roundRect(sx+ts-bw-u*.2,sy,bw,bh,u*.8);c.fill();
   c.fillStyle=dg.k==='even'?'#1a1500':'#FFFFFF';c.font=`700 ${Math.floor(ts*.24)}px "IBM Plex Mono",ui-monospace,monospace`;c.fillText(lab,sx+ts-bw/2-u*.2,sy+bh*.55);
 }
+/** Draws an NPC. */
 function drawNpc(c,id,sx,sy,ts,P){
   disc(c,sx+ts/2,sy+ts/2,ts*.38,P.npc,P.npcInk,NPCS[id].g,ts);
   const m=qMark(id);
@@ -2553,6 +2843,7 @@ function drawNpc(c,id,sx,sy,ts,P){
     c.fillStyle=m==='?'?'#FFFFFF':'#2A1D00';c.font=`700 ${Math.floor(ts*.28)}px "IBM Plex Mono",ui-monospace,monospace`;c.fillText(m,sx+ts*.82,sy+ts*.19);
   }
 }
+/** The tile/entity the player is facing. */
 function facedTarget(){
   const fx=S.pos.x+S.face.x,fy=S.pos.y+S.face.y;
   if(S.pos.room){const ch=roomCh(S.pos.room,fx,fy);return(ch==='N'||ch==='B')?[fx,fy]:null;}
@@ -2560,6 +2851,7 @@ function facedTarget(){
   const t=TILES[fy*W+fx];
   return(t===TL.SIGN||t===TL.LAIR||t===TL.SHRINE||t===TL.BENCH||entAt(fx,fy)||npcAt(fx,fy))?[fx,fy]:null;
 }
+/** Draws the local 15x11 view. */
 function drawMap(){
   const cv=$('#map');fitCanvas(cv);
   const c=cv.getContext('2d'),ts=cv.width/COLS,P=pal();
@@ -2608,14 +2900,17 @@ function drawMap(){
   disc(c,sx,sy-(S.boating?ts*.06:0),ts*.38,P.pl,P.plInk,'@',ts);
   c.fillStyle=P.ink;c.beginPath();c.arc(sx+S.face.x*ts*.43,sy+S.face.y*ts*.43,ts*.07,0,7);c.fill();
 }
+/** Colour of a zone by its danger relative to the player level. */
 function zoneDangerColor(zk){const z=ZN[zk];return z.safe?'#2A9D8F':danger(Math.round((z.lv[0]+z.lv[1])/2),S.lvl).c;}
 const RGBC={};
 const rgbOf=h=>RGBC[h]||(RGBC[h]=hexRGB(h));
+/** Colour used for a tile on the world map. */
 function tileHex(t,zk,P){
   const z=P.z[zk]||P.road;
   return (t===TL.WATER||t===TL.BRIDGE)?P.water[0]:t===TL.LAVA?P.lava[0]:(t===TL.ROAD||t===TL.FENCE||t===TL.DOOR||t===TL.SIGN||t===TL.BENCH)?P.road[0]:t===TL.BWALL?P.bwall:t===TL.TREE?P.tree:(t===TL.ROCK||t===TL.SHRINE)?P.rock:t===TL.TALL?z[1]:z[0];
 }
 /* The whole map is painted pixel by pixel into one small image, then scaled up in a single draw. */
+/** Draws the full world map with zone colours, explored areas and non-overlapping labels. */
 function drawWorldMap(){
   const cv=$('#wmap');if(!cv)return;
   const c=cv.getContext('2d'),P=pal(),k=cv.width/W;
@@ -2664,6 +2959,7 @@ function drawWorldMap(){
 }
 
 /* ---------- HUD and log ---------- */
+/** Text describing the current location. */
 function where(){
   const safe=chip('Safe haven','#2A9D8F');
   if(S.pos.room){const tid=S.pos.room.split(':')[0];return{name:`${ZN[tid].n} · ${ROOMNAME[roomKind(S.pos.room)]}`,chip:safe};}
@@ -2672,6 +2968,7 @@ function where(){
   const dg=danger(Math.round((z.lv[0]+z.lv[1])/2),S.lvl);
   return{name:`${z.n} · Lv ${z.lv[0]}–${z.lv[1]}${S.boating?' · afloat':''}`,chip:chip(dg.n,dg.c)};
 }
+/** Updates the HUD (level, HP, XP, gold, zone, time). */
 function updHUD(){
   const hud=$('#hud');hud.hidden=!S;if(!S)return;
   const m=pMax(S.lvl),nd=needP(S.lvl),w=where();
@@ -2681,13 +2978,16 @@ function updHUD(){
   $('#hday').textContent=`${isNight()?'Night':'Daytime'} · Rank ${RANKS[S.rank].k}`;
 }
 /* DOM writes happen only when the markup actually changed. */
+/** Sets innerHTML only if it changed (avoids flicker and lost focus). */
 function setHTML(el,h){if(el._h!==h){el.innerHTML=h;el._h=h;return true;}return false;}
+/** Renders the message log. */
 function renderLog(){
   const el=$('#log');
   if(setHTML(el,LOG.slice(-40).map(l=>`<p class="${l.k}">${l.t}</p>`).join('')))el.scrollTop=el.scrollHeight;
 }
 
 /* ---------- battle estimates ---------- */
+/** Damage estimate for a companion move. */
 function estMove(c,f,mv){
   const P=mv.p*(c.alpha?ALPHA_PWR:1);
   return dmgRange(c.lvl,P,cs(c).atk,f.def,tmult(mv.t,SP[f.sp].t)*bondMult()*rageC(c));
@@ -2695,6 +2995,7 @@ function estMove(c,f,mv){
 const estStrike=f=>dmgRange(S.lvl,35,pAtk(S.lvl),f.def,(1+fx('strike'))*(S.rage>0?1.3:1));
 
 /* ---------- healing targets (shared by the pack and the battle Heal menu) ---------- */
+/** Row state for a healing item on a party slot. */
 function healState(item,slot){
   if(item==='salve'){
     if(S.items.salve<1)return'none left';
@@ -2708,6 +3009,7 @@ function healState(item,slot){
   if(!c||c.hp>0)return'not fainted';
   return'';
 }
+/** Party rows for the healing picker. */
 function healRowsHTML(){
   const ps=party(),mx=pMax(S.lvl);
   const row=(tok,key,label,reason)=>`<button class="b" data-k="${tok}" ${reason?'disabled':''}><kbd>${key}</kbd> ${label}${reason?`<span class="sub">${reason}</span>`:''}</button>`;
@@ -2722,12 +3024,14 @@ function healRowsHTML(){
   h+='</div>';
   return h;
 }
+/** Maps a key to a healing target token. */
 function healKeyToTok(k){
   if(UI.tonic)return /^[2-5]$/.test(k)?'@t'+(+k-2):null;
   if(k==='1')return'@sY';
   if(/^[2-5]$/.test(k))return'@s'+(+k-2);
   return null;
 }
+/** Applies healing to the target token. */
 function healTok(tok){
   if(tok==='@sY')return{item:'salve',slot:'you'};
   const m=/^@([st])(\d)$/.exec(tok);
@@ -2735,6 +3039,7 @@ function healTok(tok){
 }
 
 /* ---------- panels ---------- */
+/** Title screen. */
 function titleHTML(){
   return `<div class="title"><div class="big">Beastmarch</div>
   <p>You wake in a land where magic has nearly run dry, but the old beasts still walk it: kitsune in the moors, griffins on the crags, drakes beyond the frozen ridge, and kelpies in the cold lakes. Wound them, bind them, and grow strong enough to cross the wild.</p>
@@ -2742,11 +3047,13 @@ function titleHTML(){
   <div class="row">${hasSave()?btn('c','Continue','pri'):''}${btn('n','New life',hasSave()?'':'pri')}${btn('h','Hardcore life','danger')}</div>
   <p class="hint">Hardcore: dying deletes your save. Standard: you wake at your last bed and lose a quarter of your gold.</p></div>`;
 }
+/** Knocked-out screen. */
 function deadHTML(){
   return `<div class="title"><h2>You died</h2><p>${S.dead.cause}</p>
   <p class="mono">Level ${S.lvl} · ${S.kills} beasts defeated · ${S.cr.length} companions bound · day ${day()}</p>
   <div class="row">${S.hard?'<p class="hint">Hardcore: your save is gone.</p>':btn('r','Wake at your last resting place','pri')}${btn('n','Start a new life',S.hard?'pri':'')}</div></div>`;
 }
+/** Battle screen. */
 function battleHTML(){
   const B=S.battle,f=B.foe,sp=SP[f.sp],tc=TYPE[sp.t],dg=danger(f.lvl,S.lvl),c=lead(),m=pMax(S.lvl);
   let co='';
@@ -2760,6 +3067,7 @@ function battleHTML(){
    <div class="unit you"><div class="sigil">@</div><div><div class="nm">You <span class="dim">Lv ${S.lvl}</span></div><div class="lab"><span>HP</span><span>${S.hp}/${m}</span></div>${bar(S.hp/m)}</div></div>
    ${co}</div>`;
 }
+/** Pack panel. */
 function packHTML(){
   const keys=Object.keys(IT).filter(k=>k!=='boat'||S.items.boat>0);
   return `<h2>Pack</h2><p class="gold mono">${S.gold} gold</p>
@@ -2767,6 +3075,7 @@ function packHTML(){
   ${healRowsHTML()}
   <p class="hint" style="margin-top:10px">Press a number to use a salve. Press <kbd>T</kbd> then a number to revive. Cords are thrown from the Bind menu during a battle. Gems, metals, ingredients, rings and potions are in Gear (<kbd>G</kbd>).</p>`;
 }
+/** Party/companions panel. */
 function partyHTML(){
   const cr=S.cr;
   if(!cr.length)return `<h2>Companions</h2><p>You have none yet. In a fight, wear a beast down, then throw a cord from the Bind menu. Wounded beasts are easier to bind.</p>`;
@@ -2782,11 +3091,13 @@ function partyHTML(){
   <p class="hint">A move's number is its power, its base strength. Damage also depends on level, attack against the target's defense, type match (double when strong, half when weak) and a roll of 85–100%. Moves of power 70 or more must rest between uses. Bound beasts deal 15% extra damage.</p>
   <div class="acts">${btn('Enter',s.p?'Move to stable':'Add to party')}${btn('l','Make lead')}${btn('x',UI.rel===s.id?'Confirm release':'Release','danger')}</div>`;
 }
+/** World map panel. */
 function mapHTML(){
   const rows=Object.keys(ZN).filter(k=>!ZN[k].safe).sort((a,b)=>ZN[a].lv[0]-ZN[b].lv[0]||ZN[a].lv[1]-ZN[b].lv[1]).map(k=>{const z=ZN[k],dg=danger(Math.round((z.lv[0]+z.lv[1])/2),S.lvl);return `<div class="item"><span><b>${z.n}</b> <span class="dim">Lv ${z.lv[0]}–${z.lv[1]}</span></span>${chip(dg.n,dg.c)}</div>`;}).join('');
   return `<h2>World map</h2><canvas id="wmap" width="896" height="704" role="img" aria-label="Explored world map"></canvas>
   <p class="hint">Colors show how dangerous each land is for your level. Unexplored land is dimmed. Teal marks safe havens. Gold diamonds mark shrines you have learned about.</p><div class="list">${rows}</div>`;
 }
+/** Bestiary panel. */
 function dexHTML(){
   const seen=Object.keys(S.seen).length,got=Object.keys(S.caught).filter(k=>S.caught[k]>0).length;
   const cards=SPL.map(id=>{
@@ -2798,6 +3109,7 @@ function dexHTML(){
   }).join('');
   return `<h2>Bestiary</h2><p class="hint">${seen} seen · ${got} bound · ${SPL.length} known to exist · every beast belongs to an evolution line</p><div class="grid2">${cards}</div>`;
 }
+/** Shop panel. */
 function shopHTML(){
   const rows=S.shop.map((k,i)=>{
     const owned=k==='boat'&&S.items.boat>0;
@@ -2806,6 +3118,7 @@ function shopHTML(){
   }).join('');
   return `<h2>Provisioner</h2><p class="gold mono">${S.gold} gold</p><div class="list">${rows}</div>`;
 }
+/** Help panel. */
 function helpHTML(){
   return `<h2>How to play</h2>
   <h3>Moving</h3><p>Every step is one turn. Walls, trees and rocks block you. The dashed box shows what you are facing.</p>
@@ -2821,6 +3134,7 @@ function helpHTML(){
   <h3>Legendary beasts</h3><p>Six legendary beasts are never found in the wild. Each sleeps at a hidden shrine and wakes only if you hold its three relics, one per quest in a chain. Finish the chain, then stand at the altar and press <kbd>E</kbd> twice. If you defeat it without binding it, it withdraws and you can try again later. Binding it uses up the relics.</p>
   <h3>Moves</h3><p>A move's power is its base strength. Moves of power 70 or more must rest for a couple of turns after use, and any action you take counts as a turn. Bound beasts deal 15% extra damage. Companions below your level earn bonus XP, 25% per level behind you, up to double. A captured Alpha keeps its extra HP and move power.</p>`;
 }
+/** Menu panel. */
 function menuHTML(){
   return `<h2>Menu</h2><div class="acts">${btn('s','Save now','pri')}${btn('?','How to play')}${btn('n',UI.newConfirm?'Confirm: erase and start over':'Start a new life','danger')}${btn('Escape','Resume')}</div>
   <p class="hint" style="margin-top:10px">Progress also saves when you rest on a bed, visit a healer, or finish a fight. ${S.hard?'This is a hardcore life: death deletes the save.':''}</p>`;
@@ -2828,6 +3142,7 @@ function menuHTML(){
 const FKEYS=['1','2','3','4','5','6','7','8','9','0','-'];
 const needLine=(need)=>Object.keys(need).map(k=>{const h=S.mats[k]||0,ok=h>=need[k];return `<span class="${ok?'okn':'lackn'}">${MATS[k].n}${need[k]>1?' ×'+need[k]:''} <span class="mono">(${h})</span></span>`;}).join(', ');
 const found=kind=>RECIPES.filter(r=>r.kind===kind&&S.recipes[r.id]).length;
+/** Text for a quest reward. */
 function rewardLine(q){
   const p=[`${q.xp} XP`];
   if(q.gold)p.push(q.gold+' gold');
@@ -2835,10 +3150,12 @@ function rewardLine(q){
   for(const k in (q.mats||{}))p.push(MATS[k].n+(q.mats[k]>1?' ×'+q.mats[k]:''));
   return p.join(' · ');
 }
+/** Objective list for a quest. */
 function objHTML(q){
   if(!q.obj.length){const n=NPCS[q.turnin||q.giver];return `<ul class="obj"><li class="${qComplete(q)?'ok':''}">Deliver it to ${n.n} (${n.place})</li></ul>`;}
   return '<ul class="obj">'+q.obj.map((o,i)=>{const n=objNeed(o),h=Math.min(objHave(q,i),n),d=h>=n;return `<li class="${d?'ok':''}">${d?'✓ ':''}${o.label}${n>1?` <span class="mono">${h}/${n}</span>`:''}</li>`;}).join('')+'</ul>';
 }
+/** NPC dialogue panel. */
 function talkHTML(){
   const t=S.talk,n=NPCS[t.npc],q=t.qid?QB[t.qid]:null;
   let h=`<div class="npc"><div class="sigil" style="--c:#8A5A14;--ci:#FFFFFF">${n.g}</div><div><h2>${n.n}</h2><div class="hint">${n.t} · ${n.place}</div></div></div>`;
@@ -2850,6 +3167,7 @@ function talkHTML(){
   }
   return h;
 }
+/** Quest log panel. */
 function questsHTML(){
   const act=QUESTS.filter(qActive).sort((a,b)=>qComplete(b)-qComplete(a)),done=QUESTS.filter(q=>S.q[q.id]&&S.q[q.id].st==='done');
   let h=`<h2>Quest log</h2><p class="hint">${done.length} of ${QUESTS.length} quests complete. Beasts and townsfolk marked <b>!</b> have work for you, and <b>?</b> means a quest is ready to hand in.</p>`;
@@ -2861,7 +3179,9 @@ function questsHTML(){
   if(done.length)h+=`<h3>Completed</h3><p class="hint">${done.map(q=>q.title).join(' · ')}</p>`;
   return h;
 }
+/** Potions the player owns. */
 function potList(){return RECIPES.filter(r=>r.kind==='potion'&&S.pot[r.id]>0);}
+/** Gear panel (rings and potions). */
 function gearHTML(){
   const rings=RECIPES.filter(r=>r.kind==='ring'&&S.rings[r.id]),pots=potList(),ps=party();
   let h=`<h2>Gear</h2><p class="hint">Rings found: ${found('ring')} of ${NRING} · Potions found: ${found('potion')} of ${NPOT}. Formulas reveal themselves when you hold everything they need. Brew and forge at a work table in town.</p>`;
@@ -2893,7 +3213,9 @@ function gearHTML(){
   h+=`<p class="hint">Legendary beasts bound: ${lg} of ${SHRINES.length}.</p>`;
   return h;
 }
+/** Recipes for the active forge tab. */
 function forgeList(){return RECIPES.filter(r=>r.kind===UI.ftab&&S.recipes[r.id]);}
+/** Forge panel. */
 function forgeHTML(){
   const ring=UI.ftab==='ring',list=forgeList(),total=ring?NRING:NPOT;
   let h=`<h2>Work table</h2><p class="hint">Rings found: ${found('ring')} of ${NRING} · Potions found: ${found('potion')} of ${NPOT}. A formula is revealed only when you hold every ingredient it calls for.</p>
@@ -2907,11 +3229,13 @@ function forgeHTML(){
   if(left>0)h+=`<p class="hint">${left} ${ring?'ring':'potion'} formula${left>1?'s':''} still undiscovered.</p>`;
   return h;
 }
+/** HTML for the currently open panel. */
 function panelHTML(){
   return ({pack:packHTML,party:partyHTML,map:mapHTML,dex:dexHTML,shop:shopHTML,help:helpHTML,menu:menuHTML,talk:talkHTML,quests:questsHTML,gear:gearHTML,forge:forgeHTML,sign:signHTML,hall:hallHTML,evolve:evolveHTML})[S.panel]();
 }
 
 /* ---------- dock ---------- */
+/** Dock buttons while exploring. */
 function worldDock(){
   return `<div class="dockrow"><div class="pad"><span></span><button class="b" data-k="w" aria-label="Move north">W</button><span></span>
   <button class="b" data-k="a" aria-label="Move west">A</button><button class="b" data-k="." aria-label="Wait a turn">·</button><button class="b" data-k="d" aria-label="Move east">D</button>
@@ -2919,6 +3243,7 @@ function worldDock(){
   <div class="acts">${btn('e','Use / talk','pri')}${btn('c','Camp')}${btn('i','Pack')}${btn('p','Companions')}${btn('q','Quests')}${btn('g','Gear')}${btn('m','Map')}${btn('b','Bestiary')}${btn('?','Help')}</div></div>
   <p class="hint">WASD or arrows to move. <kbd>.</kbd> waits a turn.</p>`;
 }
+/** Dock buttons in battle. */
 function battleDock(){
   const B=S.battle,f=B.foe,c=lead();
   if(B.sub==='bind'){
@@ -2942,6 +3267,7 @@ function battleDock(){
   }
   return `<div class="cmds">${mv}</div><div class="acts" style="margin-top:6px">${btnSub('s','Strike',`about ${rng(estStrike(f))} damage`)}${btn('g','Guard')}${btn('b','Bind','pri')}${btn('h','Heal')}${btn('w','Swap')}${btn('r','Run')}</div>`;
 }
+/** Renders the control dock for the current mode. */
 function renderDock(){
   const d=$('#dock'),put=h=>setHTML(d,h);
   if(!S||S.mode==='dead'){put('');return;}
@@ -2959,12 +3285,14 @@ function renderDock(){
 
 /* ---------- render ---------- */
 /* Several state changes in one tick draw one frame. Without an animation clock (or if it stalls), draw straight away. */
+/** Schedules a render on the next frame. */
 function render(){
   if(typeof requestAnimationFrame!=='function'){renderNow();return;}
   if(UI.rq)return;UI.rq=true;
   const go=()=>{if(UI.rq){UI.rq=false;renderNow();}};
   requestAnimationFrame(go);setTimeout(go,150);
 }
+/** Renders everything immediately. */
 function renderNow(){
   let showMap=false,html='';
   /* A waiting evolution takes over the screen as soon as nothing more important is open. */
@@ -2983,8 +3311,10 @@ function renderNow(){
 }
 
 /* ---------- input ---------- */
+/** Opens panel `n` and resets selection state. */
 function openPanel(n){S.panel=n;UI.sel=0;UI.rel=null;UI.newConfirm=false;UI.tonic=false;UI.gmode=null;UI.gpot=null;render();}
 const PANEL_KEYS={i:'pack',p:'party',m:'map',b:'dex',q:'quests',g:'gear','?':'help','/':'help'};
+/** Key handler while exploring. */
 function worldKey(k){
   switch(k){
     case'w':move(0,-1);break;case's':move(0,1);break;case'a':move(-1,0);break;case'd':move(1,0);break;
@@ -2995,6 +3325,7 @@ function worldKey(k){
     default:if(PANEL_KEYS[k])openPanel(PANEL_KEYS[k]);
   }
 }
+/** Key handler for panels. */
 function panelKey(k){
   const p=S.panel;
   if(p==='evolve'){if(k==='Enter'||k===' '||k==='e'||k==='Escape'){S.evoQ.shift();S.panel=null;render();}return;}
@@ -3093,6 +3424,7 @@ function panelKey(k){
   }
   if(PANEL_KEYS[k]&&p!=='menu'){openPanel(PANEL_KEYS[k]);return;}
 }
+/** Key handler in battle. */
 function battleKey(k){
   const B=S.battle;if(!B)return;
   if(B.sub==='heal'){
@@ -3115,16 +3447,19 @@ function battleKey(k){
   if(k==='r')return bAct('run');
   if(k==='b'||k==='h'||k==='w'){B.sub=({b:'bind',h:'heal',w:'swap'})[k];UI.tonic=false;render();}
 }
+/** Key handler on the title screen. */
 function titleKey(k){
   if(k==='c'&&hasSave()){if(!loadGame())newGame(false);}
   else if(k==='n')newGame(false);
   else if(k==='h')newGame(true);
 }
+/** Key handler on the death screen. */
 function deadKey(k){
   if(k==='r'&&!S.hard)respawn();
   else if(k==='n')newGame(S.hard);
 }
 const ARROWS={ArrowUp:'w',ArrowDown:'s',ArrowLeft:'a',ArrowRight:'d'};
+/** Top-level key dispatcher by game mode. */
 function onKey(k){
   if(S&&UI.lockUntil>now())return;
   if(ARROWS[k]){
@@ -3165,6 +3500,7 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>ren
 new MutationObserver(()=>render()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 build();renderNow();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>render());
-</script>
 
-</body></html>
+</script>
+</body>
+</html>

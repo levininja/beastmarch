@@ -1,0 +1,17 @@
+/* tokens.css — Design tokens: colour themes (light, auto-dark, forced dark/light) and font stacks. */
+:root{
+  --bg:#E4E9E3; --surface:#F3F6F1; --surface2:#D8DFD7; --ink:#15211E; --ink2:#46564F; --line:#AEBBB3;
+  --accent:#17695F; --accent-ink:#FFFFFF; --gold:#8A5F0A; --hp:#B8352B; --bad:#B8352B; --xp:#2F63A8; --focus:#0B57D0;
+  --log-info:#46564F; --log-good:#1F6B35; --log-bad:#A82A20; --log-loot:#8A5F0A;
+  --display:"Pirata One","UnifrakturCook",Georgia,serif;
+  --body:"Alegreya Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1513; --surface:#17211E; --surface2:#222F2B; --ink:#E3EBE6; --ink2:#9DB0A8; --line:#34453F;
+  --accent:#4FC0AE; --accent-ink:#04211C; --gold:#E3B24F; --hp:#E0594D; --xp:#5E9BE6; --focus:#8AB4FF;
+  --log-info:#9DB0A8; --log-good:#6CCB84; --log-bad:#F0786C; --log-loot:#E3B24F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1513; --surface:#17211E; --surface2:#222F2B; --ink:#E3EBE6; --ink2:#9DB0A8; --line:#34453F;
+  --accent:#4FC0AE; --accent-ink:#04211C; --gold:#E3B24F; --hp:#E0594D; --xp:#5E9BE6; --focus:#8AB4FF;
+  --log-info:#9DB0A8; --log-good:#6CCB84; --log-bad:#F0786C; --log-loot:#E3B24F; color-scheme:dark}

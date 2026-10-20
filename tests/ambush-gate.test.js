@@ -1,0 +1,17 @@
+const fs=require("fs");
+const noop=new Proxy(function(){},{get:(t,p)=>p==='width'?600:p==='height'?440:p==='length'?0:noop,apply:()=>noop,set:()=>true});
+const el=()=>new Proxy({innerHTML:'',hidden:false,style:{},textContent:'',dataset:{},width:600,height:440,scrollTop:0,scrollHeight:0,getBoundingClientRect:()=>({width:600}),getContext:()=>noop,blur(){},closest:()=>null,classList:{add(){},remove(){}}},{get:(t,p)=>p in t?t[p]:noop,set:(t,p,v)=>{t[p]=v;return true}});
+global.document={querySelector:()=>el(),addEventListener(){},documentElement:{getAttribute:()=>null},fonts:null};
+global.window={addEventListener(){},devicePixelRatio:1};
+global.matchMedia=()=>({matches:false,addEventListener(){}});
+global.MutationObserver=class{observe(){}};
+global.localStorage={getItem:()=>null,setItem(){},removeItem(){}};
+global.CanvasRenderingContext2D=undefined;
+(0,eval)(require('./_load')()+`;globalThis.__t={LINES,ZN,ZK,WILDBY,RAR,SP,SHRINES,LAIRS,QUESTS,DROPS,wildFor,newGame,get S(){return S;}};`);
+const code=require('./_load')()+";globalThis.__t={ambushOK,newGame,mkFoe,get S(){return S;}};";(0,eval)(code);const T=__t;T.newGame(false);T.S.lvl=20;T.S.seen={};
+const lowF=T.mkFoe("jackalope",10,false),eq=T.mkFoe("jackalope",18,false);
+console.log("unseen trivial ->",T.ambushOK(lowF));T.S.seen.jackalope=1;
+console.log("seen trivial ->",T.ambushOK(lowF),"(want false)");
+console.log("seen level 18 ->",T.ambushOK(eq),"(want true)");
+console.log("seen lvl 15 (diff -5) ->",T.ambushOK(T.mkFoe("jackalope",15,false)),"(want true)");
+console.log("seen lvl 14 (diff -6) ->",T.ambushOK(T.mkFoe("jackalope",14,false)),"(want false)");

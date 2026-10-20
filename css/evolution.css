@@ -1,0 +1,22 @@
+/* evolution.css — Evolution celebration screen and its keyframe animations (with reduced-motion overrides). */
+.evo{display:grid;gap:10px;justify-items:center;text-align:center}
+.evt{font:400 44px/1 var(--display);margin:0;color:var(--gold);animation:evFade .8s .2s both}
+.stage2{position:relative;width:210px;height:210px;display:grid;place-items:center}
+.stage2>*{grid-area:1/1}
+.stage2 .glow{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--gold) 0%,transparent 68%);opacity:0;animation:evGlow 2.6s ease-in-out both}
+.stage2 .old{animation:evOld 1.5s ease-in both}
+.stage2 .new{animation:evNew 1.2s 1.3s cubic-bezier(.2,1.4,.4,1) both}
+.stage2 .spark{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4px;border-radius:50%;background:var(--gold);opacity:0;animation:evSpark 1.4s 1.25s ease-out both}
+.evsub{animation:evFade .6s 2s both}.evbody{animation:evFade .7s 2.3s both;display:grid;gap:8px;justify-items:center;width:100%}
+.evstats{display:grid;gap:2px;width:min(360px,100%)}
+.evr{display:grid;grid-template-columns:76px 1fr 18px 1fr 52px;gap:6px;align-items:baseline;text-align:left;border-bottom:1px solid var(--line);padding:2px 0}
+.dlt{text-align:right;font-family:var(--mono);font-size:13px;opacity:.7}.dlt.up{color:var(--accent);opacity:1;font-weight:700}
+.evfacts{margin:0;padding-left:18px;text-align:left;font-size:15px}
+.evmoves,.evtype p{margin:0}
+@keyframes evOld{0%{opacity:1;filter:none;transform:scale(1)}60%{opacity:1;filter:brightness(3) saturate(0);transform:scale(1.08)}100%{opacity:0;filter:brightness(6) saturate(0);transform:scale(1.2)}}
+@keyframes evNew{0%{opacity:0;filter:brightness(6) saturate(0);transform:scale(.6)}100%{opacity:1;filter:none;transform:scale(1)}}
+@keyframes evGlow{0%{opacity:0;transform:scale(.4)}45%{opacity:.9;transform:scale(1.1)}100%{opacity:0;transform:scale(1.5)}}
+@keyframes evSpark{0%{opacity:1;transform:rotate(var(--a)) translateX(10px)}100%{opacity:0;transform:rotate(var(--a)) translateX(115px)}}
+@keyframes evFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.stage2 .old,.stage2 .glow,.stage2 .spark{display:none}.evt,.stage2 .new,.evsub,.evbody{animation:none}}
+@media (prefers-reduced-motion:reduce){.bar>i{transition:none}}

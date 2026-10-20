@@ -1,0 +1,33 @@
+/* panels.css — In-game panels: NPC dialogue, quests, lists/items, cards, battle screen, title screen, world-map tabs. */
+.npc{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.npc h2{margin:0}
+.say{font-size:19px;line-height:1.45;border-left:3px solid var(--gold);padding-left:12px;margin:10px 0}
+.qcard{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;background:var(--bg)}
+.qcard.ready{border-color:var(--log-good);box-shadow:0 0 0 1px var(--log-good)}
+.qh{margin-bottom:4px}
+.obj{margin:4px 0 6px;padding-left:20px}
+.obj li{margin:2px 0}.obj li.ok{color:var(--log-good)}
+.okn{color:var(--log-good)}.lackn{color:var(--log-bad)}
+.mats{margin:0 0 6px}
+.list{display:grid;gap:6px}
+.item{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-width:0}
+.item.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.item .grow{flex:1;min-width:0}
+.item.dead{opacity:.6}
+.grid2{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.card{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg);min-width:0}
+.card.unk{opacity:.55}
+.bt{display:grid;gap:14px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center}
+.sigil{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font:700 30px var(--mono);background:var(--c);color:var(--ci);border:3px solid var(--surface2)}
+.foe .sigil{width:84px;height:84px;font-size:42px}
+.you .sigil{background:var(--accent);color:var(--accent-ink)}
+.nm{font-weight:700;font-size:19px}
+.scene{font-size:16px;min-height:4.2em;border-left:3px solid var(--line);padding-left:10px;color:var(--ink2)}
+.scene p{margin:0 0 3px}
+.mono{font-family:var(--mono)}
+.title{display:grid;gap:12px;justify-items:start}
+.title .big{font:400 54px/1 var(--display)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+#wmap{width:100%;height:auto;aspect-ratio:5/4;display:block;border:1px solid var(--line);border-radius:6px}
+

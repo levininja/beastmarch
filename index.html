@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Beastmarch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&family=Pirata+One&display=swap">
+<!-- Stylesheets (cascade order matters; see README). -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/stage.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/arena.css">
+<link rel="stylesheet" href="css/evolution.css">
+</head>
+<body>
+<!-- Static shell. Everything inside #panel, #log and #dock is rendered by js/ui.js. -->
+<div class="app">
+  <header class="top">
+    <h1>Beastmarch</h1>
+    <div class="row"><button class="b sm" data-k="__save">Save</button><button class="b sm" data-k="Escape">Menu <kbd>Esc</kbd></button></div>
+  </header>
+  <div class="cols">
+    <div class="left">
+      <section class="hud" id="hud" aria-label="Status" hidden>
+        <div class="row">
+          <div class="lv">Lv <b id="hl">1</b></div>
+          <div class="meter"><div class="lab"><span>HP</span><span id="hhp"></span></div><div class="bar"><i id="hhpb"></i></div></div>
+          <div class="meter"><div class="lab"><span>XP</span><span id="hxp"></span></div><div class="bar xp"><i id="hxpb"></i></div></div>
+          <div class="gold"><span id="hg">0</span> gold</div>
+        </div>
+        <div class="row where"><span class="zone" id="hz"></span><span id="hd"></span><span class="dim" id="hday"></span></div>
+      </section>
+      <section class="stage">
+        <canvas id="map" width="600" height="440" role="img" aria-label="Map of your surroundings" hidden></canvas>
+        <div id="panel"></div>
+      </section>
+    </div>
+    <div class="right">
+      <section id="log" aria-live="polite" aria-label="Message log"></section>
+      <section id="dock" aria-label="Controls"></section>
+    </div>
+  </div>
+</div>
+<!-- Scripts are classic (non-module) scripts that share one global scope.
+     ORDER MATTERS: each file uses constants defined by the files above it. -->
+<script src="js/data.js"></script>
+<script src="js/quests.js"></script>
+<script src="js/world.js"></script>
+<script src="js/game.js"></script>
+<script src="js/arena.js"></script>
+<script src="js/art.js"></script>
+<script src="js/arenaui.js"></script>
+<script src="js/evo.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

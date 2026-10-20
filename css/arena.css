@@ -1,0 +1,21 @@
+/* arena.css — Proving Hall / tournament screens: calendar, brackets, match rows, pips. */
+.signline{font-size:20px;margin:4px 0 10px}
+.cal{display:flex;gap:10px;align-items:center}
+.cal .rk{font:400 34px/1 var(--display);width:40px;text-align:center}
+.cal.mine{border-color:var(--accent);background:var(--surface2)}
+.cal .when{text-align:right;white-space:nowrap}
+.today{color:var(--accent)}
+.rounds{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:8px}
+.rnd{border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0}
+.rnd.cur{border-color:var(--accent)}
+.rnd h3{margin:0 0 4px}
+.mt{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;font-size:14px;padding:3px 0;border-top:1px solid var(--line)}
+.mt span:last-child{text-align:right}
+.mt.me{background:var(--surface2);border-radius:4px;padding-left:4px;padding-right:4px}
+.mt .w{font-weight:700}.mt .l{opacity:.55}
+.vs{opacity:.7;font-family:var(--mono);font-size:12px}
+.pip{display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--ink2);margin-right:3px;vertical-align:middle}
+.pip.on{background:var(--ink2)}
+.arhead{margin-bottom:6px}
+.bad{color:var(--bad,#C0392B)}
+
