@@ -1,6 +1,6 @@
 # Beastmarch
 
-Pokemon meets WoW meets Monster Rancher.
+Pokemon meets WoW with Monster Rancher-styled tournaments.
 
 You wake in a
 stranger's cottage with no memory, bind wild beasts as companions, craft rings and potions,
