@@ -1,6 +1,8 @@
 # Beastmarch
 
-A low-magic fantasy creature-binding game that runs entirely in the browser. You wake in a
+Pokemon meets WoW meets Monster Rancher.
+
+You wake in a
 stranger's cottage with no memory, bind wild beasts as companions, craft rings and potions,
 fill in a bestiary of 100 species, and fight your way up the six tournament ranks. No server,
 no dependencies, no install.
